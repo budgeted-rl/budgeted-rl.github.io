@@ -1,0 +1,160 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{cleveref}
+\usepackage{graphicx}
+
+
+\input{mathdef.tex}
+\begin{document}
+ok
+\newpage
+\paragraph{State-action value function}
+
+\begin{align}
+R_t = R(s_t,a_t,s_{t+1})\\
+C_t = C(s_t,a_t,s_{t+1})\\
+\text{with } s_{t+1} \sim T(s,a,s' |s=s_{t},a=a_{t})
+\end{align}
+
+\begin{align}
+Q^{\pi}_r(s, a,\beta)&=&\mathbb{E}\left[\sum_{\mathrm{t} \geq 0} \gamma^{t} R_t | s_{0}=s,\beta_0=\beta, a_{0}=a, a_{\mathrm{t}}=\pi_{\mathcal{A}}\left(s_{\mathrm{t}},\beta_{t-1}\right), \beta_{\mathrm{t}}=\pi_{\mathcal{B}}\left(s_{\mathrm{t}},\beta_{t-1}\right),\forall t \geq 1\right]\\
+Q^{\pi}_c(s, a,\beta)&=&\mathbb{E}\left[\sum_{\mathrm{t} \geq 0} \gamma^{t} C_t | s_{0}=s,\beta_0=\beta, a_{0}=a, a_{\mathrm{t}}=\pi_{\mathcal{A}}\left(s_{\mathrm{t}},\beta_{t-1}\right), \beta_{\mathrm{t}}=\pi_{\mathcal{B}}\left(s_{\mathrm{t}},\beta_{t-1}\right),\forall t \geq 1\right]
+\end{align}
+
+
+\paragraph{Budgeted policy}
+
+\begin{align}
+\Pi^*(s,\beta)& \subset&\argmax\limits_{\pi} &\sum\limits_{a} \pi_\mathcal{A} (s,a,\beta) Q_r^\pi(s,a,\pi_\mathcal{B} (s,a,\beta))\label{eq:optimal-policy}\\
+& &s. t. &\sum\limits_{a} \pi_\mathcal{A} (s,a,\beta) Q_c^\pi(s,a,\pi_\mathcal{B} (s,a,\beta)) \leq \beta
+\end{align}
+
+
+\begin{align}
+\pi^*(s,\beta)  \in \argmin\limits_{\pi\in\Pi^*(s,\beta)} \sum\limits_{a} \pi_\mathcal{A} (s,a,\beta) Q_c^\pi(s,a,\pi_\mathcal{B} (s,a,\beta))
+\end{align}
+
+\paragraph{State-action optimal value function}
+\begin{align}
+\forall s,a,\beta\\
+Q^*_r(s,a,\beta) = &\max\limits_{\pi } Q^\pi_r(s,a,\beta)\\
+&\text{s.t. } Q^\pi_c(s,a,\beta) \leq \beta\\
+Q^*_c(s,a,\beta) = &\min\limits_{\pi\in\Pi^*(s,\beta)} Q_c^\pi(s,a,\beta)
+\end{align}
+
+
+\begin{property}
+
+The optimal budgeted policy $\pi^*$ verifies the state-action optimal value function.
+
+\begin{align}
+Q^*_r &= Q^{\pi^*}_r\\
+Q^*_c &= Q^{\pi^*}_c\\
+\end{align}
+
+\end{property}
+
+Ca veut dire que si on a $Q^*$ on en déduit directement la policy optimal grâce à \cref{eq:optimal-policy}.
+
+
+\begin{theorem}{Budgeted optimality bellman equation}}
+\begin{align}
+Q^*_r(s,a,\beta) = \mathbb{E}\limits_{s'} [R_a^{ss'} + \gamma \sum\limits_{a'} \pi_\mathcal{A}^*(s',\beta)_{a'} Q_r^*(s',a',\pi_\mathcal{B}^*(s',\beta)_{a'})]\\
+Q^*_c(s,a,\beta) = \mathbb{E}\limits_{s'} [C_a^{ss'} + \gamma \sum\limits_{a'} \pi_\mathcal{A}^*(s',\beta)_{a'} Q_c^*(s',a',\pi_\mathcal{B}^*(s',\beta)_{a'})]
+\end{align}
+\end{theorem}
+
+
+
+%\begin{align}
+%Q^*_r(s,a,\beta) = \mathbb{E}\limits_{s'} [R_a^{ss'} + \gamma \max\limits_{\rho,b} &\sum\limits_{a'} \rho_a Q_r^*(s',a',b_a)]\\
+%\text{s.t.} & \sum\limits_{a'} \rho_a Q_c^*(s',a',b_a) \leq \beta\\
+%Q^*_c(s,a,\beta) = \mathbb{E}\limits_{s'} [C_a^{ss'} + \gamma
+%\end{align}
+preuve :
+\begin{align}
+Q^*_r(s,a,\beta) = \max\limits_{\pi}\mathbb{E}[&\sum_{\mathrm{t} \geq 0} \gamma^{t} R_t] \\
+\text{s.t. } \mathbb{E}[&\sum_{\mathrm{t} \geq 0} \gamma^{t} C_t | \pi] \leq \beta
+\end{align}
+\begin{align}
+ Q^*_r(s,a,\beta) = \mathbb{E}\limits_{s'} [R_a^{ss'}] + \gamma * \max\limits_{\pi}\mathbb{E}[&\sum_{\mathrm{t} \geq 0} \gamma^{t} R_t | \pi]\\
+\text{s.t. } \mathbb{E}[&\sum_{\mathrm{t} \geq 0} \gamma^{t} C_t | \pi] \leq \beta\\
+\end{align}
+\text{puis il "suffit" de dérouler la preuve sur papier (avec stabilo rouge/vert)}
+
+
+
+%TODO
+
+%\subsection{MDP}
+%
+%Let $\cM = (\cS, \cA, P, r, \gamma)$ a Markov Decision Process with discrete actions: $|A| < \infty$.
+%
+%\subsection{CMDP}
+%
+%We equip $\cM$ with a cost signal $c \in \Real^{SxA}$.
+%
+%Given a random sequence of states and actions $(s_0, a_0, s_1, a_1, \dots)$, we define the reward-return $J_r$ and the cost-return $J_c$ as:
+%\begin{equation}
+%    J_r = \sum_{t=0}^\infty \gamma^t r(s_t, a_t)
+%\end{equation}
+%\begin{equation}
+%    J_c = \sum_{t=0}^\infty \gamma^t c(s_t, a_t)
+%\end{equation}
+%
+%
+%Given a fixed cost budget $\beta\in\cB \subset \Real$, the CMDP problem consists in solving for the optimal state-value $V^*$ defined by a constrained optimisation program:
+%
+%\begin{eqnarray}
+%V^*(s) = \max_{\pi\in\cM(\cA)^\cS} & \expectedvalue[J_r | s_0=s, \pi] \\
+% s.t. & \expectedvalue[J_c | s_0=s, \pi] \leq \beta
+%\end{eqnarray}
+%
+%\subsection{BMDP}
+%In this setting, the optimal value is conditioned on the budget $\beta$:
+%
+%\begin{eqnarray}
+%V^*(s, \beta) = \max_{\pi\in\cM(\cA)^\cS} & \expectedvalue[J_r | s_0=s, \pi] \\
+% s.t. & \expectedvalue[J_c | s_0=s, \pi] \leq \beta
+%\end{eqnarray}
+%
+%Evaluation V :
+%
+%\begin{eqnarray}
+%V^\pi(s, \beta) =& \expectedvalue[J_r | s_0=s, \pi] \\
+% s.t. & \expectedvalue[J_c | s_0=s, \pi] \leq \beta
+%\end{eqnarray}
+%
+%Optimal policy :
+%
+%\begin{eqnarray}
+%\pi^*_\beta (\cdot) = \argmax_{\pi\in\cM(\cA)^\cS} V^\pi(\cdot,\beta)\ \forall \beta \in B
+%\end{eqnarray}
+%
+%Let
+%\begin{eqnarray}
+%\mathcal{R}_s^\pi = \expectedvalue[J_r | s_0=s, \pi]\\
+%\mathcal{C}_s^\pi = \expectedvalue[J_c | s_0=s, \pi]
+%\end{eqnarray}
+%
+%
+%
+%
+%
+%\begin{eqnarray}
+%\text{One step boostraping :}\nonumber\\
+%V^*(s, \beta)&= & \max\limits_{\rho\in\cM(\cA)}  \sum\limits_a \rho_a \expectedvalue\limits_{s'} [R(s,a,s') + \gamma * \mathcal{R}_{s'}^{\pi_\beta^*}]\\
+%& &\text{s.t. }     \sum\limits_a \rho_a  \expectedvalue\limits_{s'} [C(s,a,s') + \gamma * \mathcal{C}_{s'}^{\pi_\beta^*}] \leq \beta\nonumber\\
+%\text{TODO supplmentary step }\nonumber\\
+%\text{Second step boostraping}\nonumber\\
+%\text{Using lemma }\nonumber\\
+%V^*(s,\beta) &= &\max\limits_{\substack{\rho\in\cM(\cA)\\b\in\mathbb{B}^A\\\rho \cdot b \leq \beta}} \rho_a \expectedvalue\limits_{s'}[\max\limits_{p'\in X} \sum\limits_{a'} \rho'_{a'} \expectedvalue\limits_{s^{''}}[R(s',a,s^{''})+\gamma*\mathcal{R}_{s''}^{\pi_{b_a}^*}]]\\
+%\text{with } X &= &\{\rho'\in\cM(\cA) |\expectedvalue\limits_{s'}[\max\limits_{\rho'\in\cM(\cA)} \sum\limits_{a'} \rho'_{a'}  \expectedvalue\limits_{s^{''}}[C(s',a,s^{''})+\gamma*\mathcal{C}_{s^{''}}^{\pi_{b_a}^*}]] \leq b_a\}\nonumber\\
+%V^*(s,\beta) &= &\max\limits_{\substack{\rho\in\cM(\cA)\\b\in\mathbb{B}^A\\\rho \cdot b \leq \beta}} \rho_a \expectedvalue\limits_{s'}[V(s',b_a]]
+%\end{eqnarray}
+
+
+\end{document}

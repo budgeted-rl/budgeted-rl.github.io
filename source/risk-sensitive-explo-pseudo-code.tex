@@ -1,0 +1,40 @@
+\begin{algorithm}[H]
+\DontPrintSemicolon
+\KwData{An environment, a BFTQ solver, $W$ CPU workers}
+\KwResult{A batch of transitions $\cD$}
+$\cD\leftarrow\{\}$\;
+\For{each intermediate batch} {
+split episodes between $W$ workers\;
+\For(\tcp*[f]{run this loop on each worker in parallel}){each episode in batch}{
+sample initial budget $\beta\sim\mathcal{U}(\mathcal{B})$.\;
+\While{episode not done}{
+update $\epsilon$ from schedule.\;
+sample $z\sim\mathcal{U}([0, 1])$.\;
+\lIf{$z < \epsilon$}{sample $(a, \beta_a)\sim\mathcal{U}(\Delta_{\cA\cB})$.\tcp*[f]{Explore}}
+\lElse{sample $(a, \beta_a)\sim\pi_\text{greedy}(a, \beta_a|s, \beta; Q^*)$.\tcp*[f]{Exploit}}
+append transition $(s, \beta, a, \beta_a, R, C, s')$ to batch $\mathcal{D}$.\;
+step episode budget $\beta \leftarrow \beta_a$
+}
+}
+$\pi_\text{greedy}(\cdot\sim; ~Q^*) \leftarrow\texttt{BFTQ}(\cD)$.
+}
+\Return{the batch of transitions $\cD$}
+%     \STATE 
+%     \WHILE{episode not done}
+%     \STATE Update $\epsilon$ from schedule.
+%     \STATE Sample $z\sim\mathcal{U}([0, 1])$.
+%     \IF {$z > \epsilon$}
+%     \STATE Sample $(a, \beta')$ from $(\pi_\mathcal{A}, \pi_\mathcal{B})$. \COMMENT{Exploit}
+%     \ELSE
+%     \STATE Sample ($a$, $\beta'$) from $\mathcal{U}(\Delta_{\mathcal{A}\mathcal{B}})$. \COMMENT{Explore}
+%     \ENDIF
+%     \STATE Append transition $(s, \beta, a, r', c', s')$ to batch $\mathcal{D}$.
+%     \STATE Update episode budget $\beta \leftarrow \beta'$.
+%     \ENDWHILE
+%     \ENDFOR
+%     \STATE $(\pi_\mathcal{A}, \pi_\mathcal{B}) \leftarrow\texttt{BFTQ}(\mathcal{D})$.
+%     \ENDFOR
+%     \STATE \textbf{return} the batch of transitions $\mathcal{D}$
+\caption{Risk-sensitive exploration}
+\label{algo:risk-sensitive-exploration}
+\end{algorithm}

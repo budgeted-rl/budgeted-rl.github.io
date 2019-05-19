@@ -1,0 +1,519 @@
+% \documentclass{article}
+
+% % if you need to pass options to natbib, use, e.g.:
+% %     \PassOptionsToPackage{numbers, compress}{natbib}
+% % before loading neurips_2019
+
+% % ready for submission
+% % \usepackage{neurips_2019}
+
+% % to compile a preprint version, e.g., for submission to arXiv, add add the
+% % [preprint] option:
+% %     \usepackage[preprint]{neurips_2019}
+
+% % to compile a camera-ready version, add the [final] option, e.g.:
+% \usepackage{neurips_2019}
+
+% % to avoid loading the natbib package, add option nonatbib:
+% %     \usepackage[nonatbib]{neurips_2019}
+
+% \usepackage[utf8]{inputenc} % allow utf-8 input
+% \usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+% \usepackage{url}            % simple URL typesetting
+% \usepackage{booktabs}       % professional-quality tables
+% \usepackage{amsfonts}       % blackboard math symbols
+% \usepackage{nicefrac}       % compact symbols for 1/2, etc.
+% \usepackage{microtype}      % microtypography
+
+% % Paper specific includes and commands
+% \usepackage{times}
+% \usepackage{soul}
+% \usepackage[small]{caption}
+% \usepackage{graphicx}
+% \usepackage{amsmath}
+% \usepackage{amssymb}
+% \usepackage{amsfonts}
+% \usepackage{amsthm}
+% \usepackage[shortlabels]{enumitem}
+% \usepackage{algorithm}
+% \usepackage{algorithmic}
+% \usepackage{tabularx}
+% \usepackage{makecell}
+% \urlstyle{same}
+% \usepackage{xargs}
+% \usepackage{mathtools}
+% \usepackage{dsfont}
+% \usepackage{import}
+% \usepackage{svg}
+% \usepackage{pdfpages}
+
+% \input{mathdef}
+
+
+% \makeatletter
+% \providecommand*{\input@path}{}
+% \g@addto@macro\input@path{{./source/}{./source/ressources/}{./ressources/}}
+% \makeatother
+
+% \urlstyle{same}
+
+% \usepackage{wrapfig}
+% \usepackage{xr-hyper}
+% \usepackage{hyperref}
+% \usepackage[capitalise,noabbrev]{cleveref}
+
+% % the following package is optional:
+% %\usepackage{latexsym}
+
+% \title{Supplementary material}
+
+% \author{
+% Nicolas Carrara$^{1,}$\thanks{equal contribution}\and
+% Edouard Leurent$^{1,3,}$\footnotemark[1]\and
+% Romain Laroche$^{4}$\and
+% Tanguy Urvoy$^{2}$\and
+% Odalric Maillard$^{1}$\and
+% Olivier Pietquin$^{1,2,}$\thanks{now with Google Brain, Paris.}\\
+% \affiliations $^1$SequeL team, INRIA Lille -- Nord Europe, France\\
+% $^2$Orange Labs, Lannion, France\\
+% $^3$Renault Group, France\\
+% $^4$Microsoft Research , Montreal, Canada
+% \emails
+% \{nicolas.carrara, edouard.leurent, odalric.maillard, olivier.pietquin\}@inria.fr,
+% romain.laroche@microsoft.com, tanguy.urvoy@orange.com
+% }
+
+
+% \begin{document}
+% \maketitle
+
+\begin{center}
+\LARGE Supplementary material
+\end{center}
+\appendix
+
+\section{Proof of Main Results}
+\subsection{Proposition \ref{prop:bellman-expectation}}
+
+\begin{proof}
+\begin{align*}
+    V^\pi(\os) &= \expectedvalue\left[ J^\pi \condbar \ov{s_0} = \os\right] \\
+    &=\sum_{\oa\in\ocA} \probability{\oa_0 = \oa \condbar\ov{s_0} = \os} \expectedvalue\left[ J^\pi \condbar \ov{s_0} = \os, \oa_0 = \oa\right]\\
+    &= \sum_{\oa\in\ocA} \pi(\oa | \os) Q^\pi(\os,\oa)
+\end{align*}
+\begin{align*}
+    Q^\pi(\os, \oa) &= \expectedvalue\left[\sum_{t=0}^\infty \gamma^t \ov{R}(\os_t, \oa_t)\condbar \ov{s_0} = \os, \ov{a_0} = \oa\right] \\
+    &= \ov{R}(\os, \oa) + \sum_{\os'\in\ocS}\probability{\os_1 = \os' \condbar\ov{s_0} = \os, \ov{a_0} = \oa}\expectedvalue\left[\sum_{t=1}^\infty \gamma^t \ov{R}(\os_t, \oa_t)\condbar \ov{s_1} = \os'\right] \\
+    &= \ov{R}(\os, \oa) + \gamma\sum_{\os'\in\ocS}\ov{P}\left(\os' \condbar\os, \oa\right) \expectedvalue\left[\sum_{t=0}^\infty \gamma^t \ov{R}(\os_t, \oa_t) \condbar \ov{s_0} = \os'\right] \\
+    &=  \ov{R}(\os, \oa) + \gamma\sum_{\os'\in\ocS}\ov{P}\left(\os' \condbar\os, \oa\right) V^\pi(\os')
+\end{align*}
+\end{proof}
+
+\subsection{Theorem \ref{thm:bellman-optimality}}
+
+\begin{proof}
+Let $\os, \oa \in \ocA\times\ocS$. For this proof, we consider  potentially non-stationary policies $\pi=(\rho, \pi')$, with $\rho\in\cM(\ocA)$, $\pi'\in\cM(\ocA)^\Natural$. The results will apply to the particular case of stationary optimal policies, when they exist.
+
+\begin{align}
+    Q_r^*(\os, \oa) &=  r(\os, \oa) + \gamma \sum_{\os'\in\cS} P(\os' | \os, \oa) V_r^{\pi*}(\os') \label{eq:pthm_def}\\
+    &= r(\os, \oa) + \gamma \sum_{\os'\in\cS} P(\os' | \os, \oa)  \max_{\rho, \pi'} V_r^{\rho, \pi'}(\os') \label{eq:pthm_opt}\\
+    &= r(\os, \oa) + \gamma \sum_{\os'\in\cS}  P(\os' | \os, \oa) \max_{\rho, \pi'} \sum_{\oa'\in\ocA} \rho(\oa' | \os')Q_r^{\pi'}(\os', \oa') \label{eq:pthm_marg}\\
+    &= r(\os, \oa) + \gamma \sum_{\os'\in\cS}  P(\os' | \os, \oa) \max_\rho\sum_{\oa'\in\ocA}\rho(\oa' | \os')\max_{\pi'\in\Pi_a(\os')}Q_r^{\pi'}(\os', \oa') \label{eq:pthm_max}\\
+    &= r(\os, \oa) + \gamma \sum_{\os'\in\cS}  P(\os' | \os, \oa) \max_\rho\expectedvalueover{\oa'\sim\rho}Q_r^*(\os', \oa') \label{eq:pthm_marg_def2}
+\end{align}
+where $\pi = (\rho, \pi')\in\Pi_a(\os)$ and $\pi'\in\Pi_a(\os')$.
+
+This follows from:
+\begin{enumerate}
+\item[\eqref{eq:pthm_def}.] Definition of $Q^*$ and Bellman Expectation expansion from Proposition \ref{prop:bellman-expectation}. 
+\item[\eqref{eq:pthm_opt}.] Definition of optimality.
+\item[\eqref{eq:pthm_marg}.] Marginalisation on $\oa'$.
+\item[\eqref{eq:pthm_max}.] \begin{itemize}
+    \item Trivially $\max_{\pi'\in\Pi_a(\os')} \sum_{\oa'\in\cA} \cdot \leq \sum_{\oa'\in\cA} \max_{ \pi'\in\Pi_a(\os)} \cdot$
+    \item Let $\ov{\pi}\in\argmax_{\pi'\in\Pi_a(\os')} Q_r^{\pi'}(\os', \oa')$, then:
+    \begin{align*}
+        \sum_{\oa'\in\ov{A}}\rho(\oa'|\os')\max_{\pi'\in\Pi_a(\os')}Q_r^{\pi'}(\os', \oa') &= \sum_{\oa'\in\ov{A}}\rho(\oa'|\os')Q_r^{\ov{\pi}}(\os', \oa') \\
+        &\leq  \max_{\pi'\in\Pi_a(\os')} \sum_{\oa'\in\ov{A}}\rho(\oa'|\os')Q_r^{\pi'}(\os', \oa')
+    \end{align*}
+\end{itemize}
+\item[\eqref{eq:pthm_marg_def2}.] Definition of $Q^*$.
+\end{enumerate}
+
+Moreover, the condition $\pi=(\rho, \pi')\in\Pi_a(\os)$ gives
+\begin{equation*}
+   \expectedvalueover{\oa'\sim\rho} Q_c^{*}(\os, \oa) = \expectedvalueover{\oa'\sim\rho} Q_c^{\pi'}(\os, \oa) = V_c^{\pi}(\os) \leq \beta
+\end{equation*}
+
+Consequently, $\pi_\text{greedy}(\cdot; Q^*)$ belongs to the $\argmax$ of \eqref{eq:pthm_marg_def2}, and in particular:
+\begin{equation*}
+     Q_r^*(\os, \oa) = r(\os, \oa) + \gamma \sum_{\os'\in\cS}  P(\os' | \os, \oa) \expectedvalueover{\oa'\sim\pi_\text{greedy}(\os', Q^*)} Q_r^*(\os', \oa')
+\end{equation*}
+
+The same reasoning can be made for $Q_c^*$ by replacing $\max$ operators by $\min$, and $\Pi_a$ by $\Pi_r$.
+\end{proof}
+
+
+
+
+%\subsection{Lemma \ref{lemma:concavity}}
+
+%\begin{proof}. Let $s,s'\in\cS, a\in\cA$.
+%We first prove those results for $V_r^*(s', \cdot)$
+
+%\textbf{Non-decreasing}
+
+%Consider $\beta_a^1 \leq \beta_a^2 \in \cB$.
+%Any policy that satisfies the budget $\beta_a^1$ in $s'$ also satisfies $\beta_a^2$, so $\Pi_c(s', \beta_a^1) \subset \Pi_c(s', \beta_a^2)$. Hence, by taking the max over policies, $V_r^*(s', \beta_a^1) \leq V_r^*(s', \beta_a^2)$.
+%Hence, $V_r^*(s', \cdot)$ is non-decreasing.
+
+%\textbf{Concave}
+
+%By contradiction: assume that $V_r^*(s', \cdot)$ is not concave, i.e. there exist $\beta^1 < \beta^2\in \cB$ and $p\in(0, 1)$ such that $\beta^3 = (1-p)\beta^1 + p\beta^2$ verifies: $V_r^*(s', \beta^3) < (1-p)V_r^*(s', \beta^1) + pV_r^*(s',\beta^2)$. By definition of $V^*$, there must be $\pi_1,\pi_2\in\Pi^*$ such that $V^*(s', \beta^1) = V^{\pi_1}(s', \beta^1)$ and $V^*(s', \beta^2) = V^{\pi_2}(s', \beta^2)$. 
+
+%Define $\pi = (1-p)(\pi_1(\cdot, \beta^1), \pi_1) + p(\pi_2(\cdot, \beta^2), \pi_2)$. By linearity of $V^\pi$ with respect to $\pi$, we have that $V_c^\pi(s', \beta^3) = (1-p)V_c^{\pi_1}(s', \beta^1) + pV_c^{\pi_2}(s', \beta^2) \leq (1-p)\beta^1 + p\beta^2 = \beta^3$ since $\pi_1, \pi_2\in\Pi^*(s')\subset\Pi_a(s')$, so $\pi$ respects the budget $\beta^3$. Moreover, we also have $V_r^\pi(s', \beta^3) = (1-p)V_r^{\pi_1}(s', \beta^1) + pV_r^{\pi_2}(s', \beta^2) > V_r^*(s', \beta^3)$, which contradicts the definition of $V_r^*$.
+
+%Consequently, $V_r^*(s', \cdot)$ is non-decreasing and concave. By \eqref{eq:bellman_expectation_Q} we see that $Q_r^*(s,a,\cdot) = R(s,a) + \gamma\expectedvalueover{s'}V_r^*(s', \cdot)$  is too.
+
+
+%\end{proof}
+
+%\subsection{Lemma \ref{lemma:tau_concavity}}
+
+
+%\subsection{Lemma \ref{lemma:pi_hull}}
+
+%\td
+
+%\begin{proof}
+%If the estimates $q^c_0, q^c_1$ are accurate, then by construction and linearity of the expectation, the returned mixture policy has an expected total cost of $\expectedvalueover{a, \beta_a \sim\pi_\text{greedy}}Q_c(s, a, \beta_a) = \beta$ as desired in \eqref{eq:pi_greedy_constraint}. Because the $Q_r(s,a,\cdot)$ is concave and under its tangents, this mixture must have the largest $Q_r$ possible as required in \eqref{eq:pi_greedy_reward}. The special case of a tie $q_r^0 = q_r^1$ is considered, where we do minimise $Q_c$ as required in \eqref{eq:pi_greedy_cost}.
+%\end{proof}
+
+
+\subsection{Proposition \ref{prop:bftq_pi_hull}}
+\begin{definition}
+Let $A$ be a set, and $f$ a function defined on $A$. We define:
+
+\begin{itemize}
+    \item Convex hull of $A$: $\cC(A) = \{\sum_{i=1}^p \lambda_i a_i: a_i\in A, \lambda_i\in\Real^+, \sum_{i=1}^p \lambda_i = 1, p\in\Natural\}$
+    \item Convex edges of $A$: $\cC^2(A) = \{\lambda a_1 + (1-\lambda)a_2: a_1, a_2\in A, \lambda\in[0, 1]\}$
+    \item Dirac distributions of $A$: $\delta(A) = \{\delta(a-a_0): a_0\in A\}$ 
+    \item Image of $A$ by $f$: $f(A) = \{f(a): a\in A\}$
+\end{itemize}
+\end{definition}
+
+\begin{proof}
+Let $\os=(s,\beta)\in\ocS$ and $Q\in(\Real^2)^{\ocS\ocA}$. We recall the definition of $\pi_\text{greedy}$:
+\begin{subequations}
+\label{eq:pi_greedy}
+\begin{equation}
+    \pi_\text{greedy}(\oa|\os; Q) \in \argmin_{\rho\in\Pi_r^Q} \expectedvalueover{\oa\sim\rho}Q_c(\os, \oa) \tag{\ref{eq:pi_greedy_cost}}
+\end{equation}
+\begin{align}
+    \text{where }\quad\Pi_r^Q = &\argmax_{\rho\in\cM(\ocA)} \expectedvalueover{\oa\sim\rho} Q_r(\os, \oa) \tag{\ref{eq:pi_greedy_reward}}\\
+    & \text{ s.t. }  \expectedvalueover{\oa\sim\rho} Q_c(\os, \oa) \leq \beta \tag{\ref{eq:pi_greedy_constraint}}
+\end{align}
+\end{subequations}
+
+Note that any policy in the $\argmin$ in \eqref{eq:pi_greedy_cost} is suitable to compute $\cT$.
+We first reduce the set of candidate optimal policies.
+Consider the problem described in \eqref{eq:pi_greedy_reward},\eqref{eq:pi_greedy_constraint}: it can be seen as a single-step CMDP problem with reward $R=Q_r$ and cost $C=Q_c$. By \citep[Theorem 4.4][]{BEUTLER1985236}, we know that the solutions are mixtures of two deterministic policies. Hence, we can replace $\cM(\cA)$ by $\cC^2(\delta(\ocA))$ in \eqref{eq:pi_greedy_reward}.
+
+Moreover, remark that:
+\begin{align*}
+    \{\expectedvalueover{\oa\sim\rho} Q(\os,\oa): \rho\in \cC^2(\delta(\ocA))\} &= \{\expectedvalueover{\oa\sim\rho} Q(\os,\oa): \rho=(1-\lambda)\delta(\oa-\oa_1)+\lambda\delta(\oa-\oa_2), \oa_1,\oa_2\in\ocA, \lambda\in[0,1]\} \\
+    &= \{(1-\lambda)Q(\os, \oa_1)+\lambda Q(\os, \oa_2), \oa_1,\oa_2\in\ocA, \lambda\in[0,1]\} \\
+    &= \cC^2(Q(\os,\ocA))\}
+\end{align*}
+
+Hence, the problem \eqref{eq:pi_greedy_reward}, \eqref{eq:pi_greedy_constraint} has become:
+\begin{equation*}
+    \tilde{\Pi}^Q_r = \argmax_{(q_r, q_c)\in\cC^2(Q(\os, \ocA))} q_r \quad\text{ s.t. }\quad q_c \leq \beta 
+\end{equation*}
+and the solution space for $\pi_\text{greedy}$ is $q^*=\argmin_{q\in\tilde{\Pi}^Q_r} q_c$. 
+
+The original problem in the space of actions $\ocA$ is now expressed in the space of values $Q(\os, \ocA)$ (which is why we use $=$ instead of $\in$ before $\argmin$ here, see Remark \ref{rmk:independence}).
+
+We further restrict the search space of $q^*$ following two observations:
+\begin{enumerate}
+    \item $q^*$ belongs to the \emph{undominated} points $\cC^2(Q(\os,\ocA)^-)$:
+    \begin{equation*}
+        Q(\os,\ocA)^- = \{q\in Q(\os,\ocA): q_c \leq q_c^{\pm} = \min_{q^+\in Q^+} q_c^+\}\text{ with }Q^+ = \argmax_{q\in Q(\os,\ocA)} q_r
+    \end{equation*}
+    Denote $q^*$ = $(1-\lambda) q^1 + \lambda q^2$, with $q^1, q^2\in Q(\os,\ocA)$. There are three possible cases:
+    \begin{enumerate}
+        \item $q^1, q^2 \not\in Q(\os,\ocA)^-$. Then $q_c^* = (1-\lambda) q^1_c + \lambda q^2_c > q_c^{\pm}$. But then $q_c^{\pm} < q_c^* \leq \beta$ so $q^{\pm}\in\tilde{\Pi}^Q_r$ with a strictly lower $q_c$ than $q^*$, which contradicts the $\argmin$.
+        \item $q^1\in Q(\os,\ocA)^-, q^2 \not\in Q(\os,\ocA)^-$. But then consider the mixture $q^\top = (1-\lambda) q^1 + \lambda q^\pm$. Since $q_r^{\pm} \geq q_r^{2}$ and $q_r^{\pm} < q_r^{2}$, we also have $q^\top_r \geq q_r^*$ and $q^\top_c < q_c^*$, which also contradicts the $\argmin$.
+        \item $q^1\in Q(\os,\ocA)^-$ is the only remaning possibility.
+    \end{enumerate}
+    \item $q^*$ belongs to the \emph{top frontier} $\cC^2(\cF_Q)$:
+    \begin{equation*}
+        \cF_Q = \{q\in Q(\os, \ocA)^-: \not\exists q'\in Q(\os, \ocA)^-: q_c=q_c'\text{ and }q_r<q_r'\}
+    \end{equation*}
+    Again, denote $q^*$ = $(1-\lambda) q^1 + \lambda q^2$, with $q^1, q^2\in Q(\os,\ocA)^-$.
+    If either $q^1$ or $q^2$ do not belong to $\cF_Q$, they can be replaced in $q^\top = (1-\lambda) q^{1'} + \lambda q^{2'}$ by a $q^{i'}$ with equal $q_c$ and strictly higher $q_r$, which makes $q^\top$ a strictly better candidate than $q^*$ and contradicts the $\argmax$.
+\end{enumerate}
+
+
+
+
+TODO : $\cF_Q$ is "strictly increasing" (quel sens pour un set ??)
+
+TODO : $\cF_Q$ is "concave" (quel sens pour un set ??)
+
+We construct the optimal mixture as follow : 
+
+\textbf{Regular case} If it exists $\ox$ such that $Q_c(\ov{s},\ox) \geq \beta$ then $q^* = \lambda Q(\ov{s},\oa_0) + (1-\lambda) Q(\ov{s},\oa_1)$ with $(Q(\ov{s},\oa_0),Q(\ov{s},\oa_1)) \in \cF_Q\times \cF_Q$ .
+
+The constraint value of Q for $\oa_0$ and $\oa_1$ must flank the budget: $Q_c(\ov{s},\oa_0) \leq \beta \leq Q_c(\ov{s},\oa_1)$. This condition  is verified by contradiction : 
+
+\begin{enumerate}
+    \item if $Q_c(\ov{s},\oa_0) > \beta$ and $Q_c(\ov{s},\oa_1) > \beta$ then the constraint is violated.
+    \item If $Q_c(\ov{s},\oa_0) < \beta$ and $Q_c(\ov{s},\oa_1) < \beta$ then $q^*$ is sub-optimal as it exists $\oa_\top$ such that $Q(\ov{s},\oa_\top) \in \cF_Q$ dominates $Q(\ov{s},\oa_0)$ and $Q(\ov{s},\oa_1)$ as $\cF_Q$ is "strictly increasing".
+\end{enumerate}
+
+The $\lambda$ value is designed such that the budget is respected. Then  $\lambda = \frac{\beta - Q_c(\ov{s},\oa_0) }{Q_c(\ov{s},\oa_1) - Q_c(\ov{s},\oa_0)}$ because the line $(Q(\ov{s},\oa_0),Q(\ov{s},\oa_1))$ is strictly increasing as  $Q_c(\ov{s},\oa_0) \leq \beta \leq Q_c(\ov{s},\oa_1)$ and $Q_r(\ov{s},\oa_0) \leq Q_r(\ov{s},\oa_1)$ as $\cF_Q$ is "strictly increasing". Then,  $\lambda$ is the unique candidate such that $q_c = \beta$. 
+
+
+
+The 2 candidates $\oa_0$ and $\oa_1$ are necessarily :
+
+\begin{align}
+\ov{a_0} = \argmin\limits_{\oz \in \ocA} (\beta - Q^c(\os,\ox))
+ \text{ s.t. } Q^c(\os,\ox) \leq \beta
+\text{ and } Q(\os,\ox) \in\cF_Q\\
+\ov{a_1} = \argmin\limits_{\oz \in \ocA} (Q^c(\os,\ox) - \beta)
+ \text{ s.t. } Q^c(\os,\ox) \geq \beta
+\text{ and } Q(\os,\ox) \in\cF_Q
+\end{align}
+
+Indeed, let $(\ox,\oy)$ two points such that $Q^c(\os,\ox) \leq \beta \leq Q^c(\os,\oy)$ , then it exists $(\ox',\oy')$ such that $Q^c(\os,\ox) \leq Q^c(\os,\ox') \leq \beta \leq Q^c(\os,\oy) \leq Q^c(\os,\oy)$. As $\cF_Q$ is "concave", the segment $[Q(\os,\ox'),Q(\os,\oy')]$ is above the segment  $[Q(\os,\ox),Q(\os,\oy)]$ for any abscisse between $Q_c(\os,\ox)$ and $Q(\os,\oy)$ and in particular when the abscisse is $\beta$.
+
+
+
+\textbf{Degenerate case} If it doesn't exists $\ox$ such that $Q_c(\ov{s},\ox) \geq \beta$ then  $q^* =  Q(\ov{s},\oa_0)$ with $\ov{a_0} = \argmax\limits_{\oz \in \ocA} Q^r(\os,\ox)$ such that $Q(\os,\ox) \in \cF_Q$
+
+\end{proof}
+
+
+%\begin{proof}
+%First, a straightforward proof by induction shows that for all $k\in\Natural$, $Q_k$ computed at iteration $k$ of either Algorithm \ref{algo:bvi} or Algorithm \ref{algo:bftq} is concave non-decreasing with respect to $\beta_a$: the initialisation is trivial from $Q_0 = 0$, and the heredity stems from Lemma \ref{lemma:tau_concavity}.
+%\end{proof}
+
+
+% \subsection{Decomposition Lemma}
+
+% \begin{lemma}
+%     For any sequence real valued functions $f_1,\ldots,f_n$ and any real number $c$, we have:
+%     \[
+%         \begin{array}{lcl}
+%             \underbrace{\max\limits_{\sum_i x_i \leq c}\sum_j f_j(x_j)}_{(a)} & \quad{}=\quad{} & \underbrace{\max\limits_{\sum_i c_i \leq c}\left(\sum_j\max\limits_{x\leq c_j} f_j(x)\right)}_{(b)}\\
+%         \end{array}
+%     \]
+% \end{lemma}
+
+% \begin{proof}
+%     Let us first show that $(a)\leq(b)$.
+%     By definition of the maximum on a set, for any $f_j$ and any $c_j$ we have:
+%     $\max\limits_{x\leq c_j} f_j(x) \geq f_j(c_j)$.
+%     Hence, by replacing these terms in $(b)$ we get:
+%       \[
+%     \begin{array}{lcl}
+%         \max\limits_{\sum_i c_i \leq c} \sum_j f_j(c_j) & \quad{}\leq\quad{} & \max\limits_{\sum_i c_i\leq c}\left(\sum_j \max\limits_{x_j\leq c_j} f_j(x_j)\right)\\
+%     \end{array}
+%     \]
+%     The left hand side of this inequality is just a rewriting of $(a)$ with different dummy variables names.
+
+%     Let us show now that $(a) \geq (b)$.
+%     Let $\hat{x}_1,\ldots,\hat{x}_n, \hat{c}_1, \ldots \hat{c}_n$ be a realisation (argmax) of $(b)$.
+%     By definition of $(b)$'s feasible set, we have $\sum_i\hat{c}_i \leq c$ and for any $i$: $\hat{x}_i\leq \hat{c}_i$.
+%     Because $\sum_i\hat{x}_i\leq \sum_i\hat{c}_i \leq c$, the tuple $(\hat{x}_1, \ldots \hat{x}_n)$ is also a feasible value for $(a)$. And, by definition of the maximum on a set: $(a) = \max\limits_{\sum_i x_i \leq c} \sum_j f_j(x_j) \geq \sum_j f_j(\hat{x}_j) = (b)$.
+% \end{proof}
+
+\section{Risk-Sensitive Exploration}
+
+\input{source/risk-sensitive-explo-pseudo-code.tex}
+
+\section{Scalable Implementation of BFTQ}
+\label{sec:bftq-full}
+
+\input{source/bftq-pseudo-code.tex}
+
+\section{Experiments}
+
+\subsection{The Lagrangian Relaxation Baseline}
+
+As explained on \cref{fig:Lagrangian}, the optimal deterministic policy can be obtained by a line-search on the Lagrange multiplier values $\lambda$.
+
+Then, according to \citet[Theorem 4.4]{BEUTLER1985236}, the optimal policy is a randomised mixture of two deterministic policies: the safest deterministic policy that violates the constraint $\pi_{\lambda-}$ and the riskier of the feasible ones $\pi_{\lambda+}$.
+
+Fitted-Q (FTQ)~\citep{Ernst2005,Riedmiller2005} can be easily adapted for continuous states CMDP and BMDP through this methodology, but given the high variance it requires a lot of simulations to get a proper estimate of the calibration curve. Our purpose is to avoid this calibration phase.
+
+\begin{figure}[tp]
+    \centering
+    \includegraphics[width=0.5\textwidth]{source/img/CalibrationExample}
+    \caption{Calibration of a penalty multiplier according to the budget $\beta$. The optimal multiplier $\lambda^*_{\text{avg}}$ is the smallest one to satisfy the budget constraint on average. Safer policies can also be selected according to the largest deviation from this mean cost.}
+    \label{fig:Lagrangian}
+\end{figure}
+
+\subsection{Environments Parameters}
+\label{sec:env-parameters}
+
+\paragraph{slot-filling} The system can either understand $(\mu=\mu_u)$ or misunderstand $(\mu=\mu_m)$ with a fixed probability called the sentence error rate $ser$. Then, the speech recognition score is simulated \citep{Khouzaimi2015}: $srs = (1+\exp(-x))^{-1}$ with $x\sim N(\mu, \sigma)$. It's the confidence score of the natural language understanding module about the last utterance. On the other hand, there are no recognition errors ($ser=0$ and $srs=1$) when the user provides information using the numeric pad.
+
+\begin{table}[ht!]
+    \centering
+    \begin{tabularx}{1.0\textwidth}{lll}
+        \toprule
+        Parameter & Description & Value\tabularnewline
+        \midrule
+        - & Size of the environment & 7 x 6\tabularnewline
+        - & \makecell[l]{Standard deviation of the Gaussian \\noise applied to actions} & (0.25,0.25)\tabularnewline
+        H & Episode duration & 9\tabularnewline
+        \bottomrule
+    \end{tabularx}
+    \caption{Parameters of \texttt{Corridors}}
+\end{table}
+
+\begin{table}[ht!]
+    \centering
+    \begin{tabularx}{1.0\textwidth}{lll}
+        \toprule
+        Parameter & Description & Value\tabularnewline
+        \midrule
+        ser & Sentence Error Rate & 0.6\tabularnewline
+        $\mu_m$& Gaussian mean for misunderstanding & -0.25\tabularnewline
+        $\mu_u$& Gaussian mean for understanding & 0.25\tabularnewline
+        $\sigma$& Gaussian standard deviation & 0.6\tabularnewline
+        $p$& Probability of hang-up & 0.25\tabularnewline
+        H & Episode duration & 10\tabularnewline
+        - & Number of slots & 3\tabularnewline
+        \bottomrule
+    \end{tabularx}
+    \caption{Parameters of \texttt{Slot-Filling}}
+\end{table}
+
+
+\begin{table}[ht!]
+    \centering
+    \begin{tabularx}{1.0\textwidth}{lll}
+        \toprule
+        Parameter & Description & Value\tabularnewline
+        \midrule
+        $N_v$& Number of vehicles & 2 - 6\tabularnewline
+        $\sigma_p$& Standard deviation of vehicles initial positions & 100 m\tabularnewline
+        $\sigma_v$& Standard deviation of vehicles initial velocities & 3 m/s\tabularnewline
+        H & Episode duration & 15 s\tabularnewline
+        \bottomrule
+    \end{tabularx}
+
+    \caption{Parameters of \texttt{highway-env}}
+\end{table}
+
+\subsection{Algorithm parameters}
+\label{sec:algorithms-parameters}
+
+\begin{table}[H]
+    \centering
+    \begin{tabularx}{1.0\textwidth}{lll}
+        \toprule
+        Parameters & BFTQ(risk-sensitive) & BFTQ(risk-neutral)\tabularnewline
+        \midrule
+        architecture & 256x128x64 & 256x128x64\tabularnewline
+        regularisation & 0.001 & 0.001\tabularnewline
+        activation & relu & relu\tabularnewline
+        size beta encoder & 3 & 3\tabularnewline
+        initialisation & xavier & xavier\tabularnewline
+        loss function & L2 & L2\tabularnewline
+        optimizer & adam & adam\tabularnewline
+        learning rate & 0.001 & 0.001\tabularnewline
+        epoch (NN) & 1000 & 5000\tabularnewline
+        normalize reward & true & true\tabularnewline
+        epoch (FTQ) & 12 & 12\tabularnewline
+        & 0:0.01:1 & -\tabularnewline
+        beta for duplication & 0:0.1:1 & 0:0.1:1\tabularnewline
+        & (1,1) & (1,1)\tabularnewline
+        & 5000 & 5000\tabularnewline
+        & 10 & 10\tabularnewline
+        & 4 & 4\tabularnewline
+        & 1000 & 1000\tabularnewline
+        decay epsilon scheduling & 0.001 & 0.001\tabularnewline
+        \bottomrule
+
+    \end{tabularx}
+    \caption{Algorithms parameters for \texttt{Corridors}}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \begin{tabularx}{1.0\textwidth}{lll}
+        \toprule
+        Parameters & BFTQ & FTQ\tabularnewline
+        \midrule
+        architecture & 256x128x64 & 128x64x32\tabularnewline
+        regularisation & 0.0005 & 0.0005\tabularnewline
+        activation & relu & relu\tabularnewline
+        size beta encoder & 50 & -\tabularnewline
+        initialisation & xavier & xavier\tabularnewline
+        loss function & L2 & L2\tabularnewline
+        optimizer & adam & adam\tabularnewline
+        learning rate & 0.001 & 0.001\tabularnewline
+        epoch (NN) & 5000 & 5000\tabularnewline
+        normalize reward & true & true\tabularnewline
+        epoch (FTQ) & 11 & 11\tabularnewline
+        & 0:0.01:1 & -\tabularnewline
+        beta for duplication & - & -\tabularnewline
+        & (1,1) & (1,1)\tabularnewline
+        & 5000 & 5000\tabularnewline
+        & 10 & 10\tabularnewline
+        & 6 & 6\tabularnewline
+        & 1000 & 1000\tabularnewline
+        decay epsilon scheduling & 0.001 & 0.001\tabularnewline
+        \bottomrule
+    \end{tabularx}
+    \caption{Algorithms parameters for \texttt{Slot-Filling}}
+\end{table}
+%
+\begin{table}[H]
+    \centering
+    \begin{tabularx}{1.0\textwidth}{lll}
+        \toprule
+        Parameters & BFTQ & FTQ\tabularnewline
+        \midrule
+        architecture & 256x128x64 & 128x64x32\tabularnewline
+        regularisation & 0.0005 & 0\tabularnewline
+        activation & relu & relu\tabularnewline
+        size beta encoder & 50 & -\tabularnewline
+        initialisation & xavier & xavier\tabularnewline
+        loss function & L2 & L2\tabularnewline
+        optimizer & adam & adam\tabularnewline
+        learning rate & 0.001 & 0.01\tabularnewline
+        epoch (NN) & 5000 & 400\tabularnewline
+        normalize reward & true & true\tabularnewline
+        epoch (FTQ) & 15 & 15\tabularnewline
+        & 0:0.01:1 & -\tabularnewline
+        beta for duplication & - & -\tabularnewline
+        & (0.9, 0.9) & (0.9, 0.9)\tabularnewline
+        & 10000 & 10000\tabularnewline
+        & 10 & 10\tabularnewline
+        & 10 & 10\tabularnewline
+        & 150 & 150\tabularnewline
+        decay epsilon scheduling & 0.0003 & 0.0003\tabularnewline
+        \bottomrule
+    \end{tabularx}
+    \caption{Algorithms parameters for \texttt{Highway-Env}}
+\end{table}
+
+\subsection{Examples of BFTQ policies executions}
+\label{sec:bftq-executions}
+
+In \cref{table:dialogues}, we display two dialogues done with the same BFTQ policy. The policy is given two budgets to respect in expectation,$\beta=0$ and $\beta=0.5$. For budget 0, one can see that the system never uses the \texttt{ask\_num\_pad} action. Instead, it uses \texttt{ask\_oral} , an action subject to recognition errors. The system keeps asking for the same slot 2, because it has the lowest speech recognition score. It eventually summarizes the form to the user, but then reaches the maximum dialogue length and thus faces a dialogue failure. For budget 0.5, the system first asks in a safe way, with \texttt{ask\_oral}. It may want to \texttt{ask\_num\_pad} if one of the speech recognition score is low. Then, the system proceeds to a confirmation of the slot values. If it is incorrect, the system continues the dialogue using unsafe the \texttt{ask\_num\_pad} action to be certain of the slot values.
+
+\input{source/dialogues.tex}
+
+
+
+% \clearpage
+% \bibliographystyle{named}
+% \bibliography{budgeted_rl}
+% \end{document}
+
