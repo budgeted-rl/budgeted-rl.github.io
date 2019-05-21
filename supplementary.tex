@@ -116,18 +116,18 @@
 Let $\os, \oa \in \ocA\times\ocS$. For this proof, we consider  potentially non-stationary policies $\pi=(\rho, \pi')$, with $\rho\in\cM(\ocA)$, $\pi'\in\cM(\ocA)^\Natural$. The results will apply to the particular case of stationary optimal policies, when they exist.
 
 \begin{align}
-    Q_r^*(\os, \oa) &=  r(\os, \oa) + \gamma \sum_{\os'\in\cS} P(\os' | \os, \oa) V_r^{\pi*}(\os') \label{eq:pthm_def}\\
-    &= r(\os, \oa) + \gamma \sum_{\os'\in\cS} P(\os' | \os, \oa)  \max_{\rho, \pi'} V_r^{\rho, \pi'}(\os') \label{eq:pthm_opt}\\
-    &= r(\os, \oa) + \gamma \sum_{\os'\in\cS}  P(\os' | \os, \oa) \max_{\rho, \pi'} \sum_{\oa'\in\ocA} \rho(\oa' | \os')Q_r^{\pi'}(\os', \oa') \label{eq:pthm_marg}\\
-    &= r(\os, \oa) + \gamma \sum_{\os'\in\cS}  P(\os' | \os, \oa) \max_\rho\sum_{\oa'\in\ocA}\rho(\oa' | \os')\max_{\pi'\in\Pi_a(\os')}Q_r^{\pi'}(\os', \oa') \label{eq:pthm_max}\\
-    &= r(\os, \oa) + \gamma \sum_{\os'\in\cS}  P(\os' | \os, \oa) \max_\rho\expectedvalueover{\oa'\sim\rho}Q_r^*(\os', \oa') \label{eq:pthm_marg_def2}
+    Q_r^*(\os, \oa) &=  \max_{\rho, \pi'} Q_r^{\rho, \pi'}(\os', \oa') \label{eq:pthm_def}\\
+    &= \max_{\rho, \pi'} R_r(\os, \oa) + \gamma \sum_{\os'\in\cS} P(\os' | \os, \oa) V_r^{\rho, \pi'}(\os') \label{eq:pthm_exp}\\
+    &= R_r(\os, \oa) + \gamma \sum_{\os'\in\cS}  P(\os' | \os, \oa) \max_{\rho, \pi'} \sum_{\oa'\in\ocA} \rho(\oa' | \os')Q_r^{\pi'}(\os', \oa') \label{eq:pthm_marg}\\
+    &= R_r(\os, \oa) + \gamma \sum_{\os'\in\cS}  P(\os' | \os, \oa) \max_\rho\sum_{\oa'\in\ocA}\rho(\oa' | \os')\max_{\pi'\in\Pi_a(\os')}Q_r^{\pi'}(\os', \oa') \label{eq:pthm_max}\\
+    &= R_r(\os, \oa) + \gamma \sum_{\os'\in\cS}  P(\os' | \os, \oa) \max_\rho\expectedvalueover{\oa'\sim\rho}Q_r^*(\os', \oa') \label{eq:pthm_marg_def2}
 \end{align}
 where $\pi = (\rho, \pi')\in\Pi_a(\os)$ and $\pi'\in\Pi_a(\os')$.
 
 This follows from:
 \begin{enumerate}
-\item[\eqref{eq:pthm_def}.] Definition of $Q^*$ and Bellman Expectation expansion from Proposition \ref{prop:bellman-expectation}. 
-\item[\eqref{eq:pthm_opt}.] Definition of optimality.
+\item[\eqref{eq:pthm_def}.] Definition of $Q^*$. 
+\item[\eqref{eq:pthm_exp}.] Bellman Expectation expansion from Proposition \ref{prop:bellman-expectation}.
 \item[\eqref{eq:pthm_marg}.] Marginalisation on $\oa'$.
 \item[\eqref{eq:pthm_max}.] \begin{itemize}
     \item Trivially $\max_{\pi'\in\Pi_a(\os')} \sum_{\oa'\in\cA} \cdot \leq \sum_{\oa'\in\cA} \max_{ \pi'\in\Pi_a(\os)} \cdot$
@@ -153,8 +153,45 @@ Consequently, $\pi_\text{greedy}(\cdot; Q^*)$ belongs to the $\argmax$ of \eqref
 The same reasoning can be made for $Q_c^*$ by replacing $\max$ operators by $\min$, and $\Pi_a$ by $\Pi_r$.
 \end{proof}
 
+\subsection{Proposition \ref{prop:greedy_optimal}}
 
+\begin{definition}
+We define the Bellman Expectation Operator $\cT^\pi$:\\
+$\forall \pi\in\Pi, Q\in(\Real^2)^{\ocS\ocA}, \os\in\ocS, \oa\in\ocA$,
+\begin{align}
+\label{eq:bellman_exepctation_operator}
+    \cT^\pi Q(\os, \oa) &= R(\os, \oa) + \gamma \sum_{\os'\in\ocS}\sum_{a'\in\ocA}\ov{P}(\os'|\os, \oa)\pi(\oa'|\os') Q(\os')
+\end{align}
+\end{definition}
 
+\begin{lemma}[Properties of $\cT^\pi$]
+\label{lemma:bellman_expectation_contraction}
+$\cT^\pi$ is a $\gamma$-contraction and $Q^\pi$ is its unique fixed point.
+\end{lemma}
+\begin{proof}
+The proof is the same as in the MDP case: let $\pi\in\Pi, Q_1, Q_2\in(\Real^2)^{\ocS\ocA}$.
+\begin{align*}
+    \forall \os\in\ocS, \oa\in\ocA,\quad \left|\cT^\pi Q_1(\os,\oa) - \cT^\pi Q_2(\os,\oa)\right| &= \left|\gamma\expectedvalueover{\substack{\os'\sim\ov{P}(\os'|\os,\oa) \\ \oa'\sim\pi(\oa'|\os')}} Q_1(\os',\oa') - Q_2(\os',\oa')\right|\\
+    &\leq \gamma\left\|Q_1-Q_2\right\|_\infty
+\end{align*}
+Hence, $\left\|\cT^\pi Q_1  - \cT^\pi Q_2 \right\|_\infty \leq \gamma\left\|Q_1-Q_2\right\|_\infty$
+
+By Banach fixed point theorem, $\cT^\pi$ admits a unique fixed point.
+It can be easily verified that $Q^\pi$ is indeed this fixed point by combining the two Bellman Expectation equations \eqref{eq:bellman_expectation_V} and \eqref{eq:bellman_expectation_Q}.
+\end{proof}
+
+We now prove the result of \Cref{prop:greedy_optimal}.
+\begin{proof}
+Notice from the definitions of $\cT$ and $\cT^\pi$ in \eqref{eq:bellman-optimality} and \eqref{eq:bellman_exepctation_operator} that $\cT$ and $\cT^{\pi_\text{greedy}(\cdot;Q^*)}$ coincide on $Q^*$. Moreover, since $Q^* = \cT Q^*$ by \cref{thm:bellman-optimality}, we have: $    \cT^{\pi_\text{greedy}(\cdot;Q^*)} Q^* = \cT Q^* = Q^*
+$.
+Hence, $Q^*$ is a fixed point of $\cT^{\pi_\text{greedy}(\cdot;Q^*)}$, and by \cref{lemma:bellman_expectation_contraction} it must be equal to $Q^{\pi_\text{greedy}(\cdot;Q^*)}$
+
+To show the same result for $V^*$, notice that 
+\begin{equation*}
+    V^{\pi_\text{greedy}(Q^*)}(\os) = \expectedvalueover{\oa\sim\pi_\text{greedy}(Q^*)}Q^{\pi_\text{greedy}(Q^*)}(\os,\oa) = \expectedvalueover{\oa\sim\pi_\text{greedy}(Q^*)}Q^*(\os,\oa)
+\end{equation*}
+By applying the definitions of $Q^*$ and $\pi_\text{greedy}$, we recover the definition of $V^*$.
+\end{proof}
 
 %\subsection{Lemma \ref{lemma:concavity}}
 
@@ -231,7 +268,7 @@ Hence, the problem \eqref{eq:pi_greedy_reward}, \eqref{eq:pi_greedy_constraint} 
 \end{equation*}
 and the solution of $\pi_\text{greedy}$ is $q^*=\argmin_{q\in\tilde{\Pi}^Q_r} q_c$. 
 
-The original problem in the space of actions $\ocA$ is now expressed in the space of values $Q(\os, \ocA)$ (which is why we use $=$ instead of $\in$ before $\argmin$ here, see Remark \ref{rmk:independence}).
+The original problem in the space of actions $\ocA$ is now expressed in the space of values $Q(\os, \ocA)$ (which is why we use $=$ instead of $\in$ before $\argmin$ here).
 
 We further restrict the search space of $q^*$ following two observations:
 \begin{enumerate}
@@ -324,7 +361,16 @@ We recall the Risk-Sensitive Exploration algorithm in \cref{algo:risk-sensitive-
 \section{Scalable Implementation of BFTQ}
 \label{sec:bftq-full}
 
-We recall the scalable version of BFTQ in \cref{algo:bftq_full}
+We recall the scalable version of BFTQ in \cref{algo:bftq_full} and the architecture of the neural network \cref{fig:architecture}.
+
+\begin{minipage}[t]{0.5\textwidth}
+\begin{figure}[H]
+    \centering
+    \input{source/architecture.tex}
+    \caption{Neural Network for $Q$-functions approximation when $\cS=\Real^2$ and $|\cA| = 2$.}
+    \label{fig:architecture}
+\end{figure}
+\end{minipage}
 
 \input{source/bftq-pseudo-code.tex}
 
