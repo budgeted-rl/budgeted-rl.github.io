@@ -92,7 +92,8 @@
 \end{center}
 \appendix
 
-\section{Proof of Main Results}
+\section{Proofs of Main Results}
+\label{sec:proofs}
 \subsection{Proposition \ref{prop:bellman-expectation}}
 
 \begin{proof}
@@ -102,10 +103,10 @@
     &= \sum_{\oa\in\ocA} \pi(\oa | \os) Q^\pi(\os,\oa)
 \end{align*}
 \begin{align*}
-    Q^\pi(\os, \oa) &= \expectedvalue\left[\sum_{t=0}^\infty \gamma^t \ov{R}(\os_t, \oa_t)\condbar \ov{s_0} = \os, \ov{a_0} = \oa\right] \\
-    &= \ov{R}(\os, \oa) + \sum_{\os'\in\ocS}\probability{\os_1 = \os' \condbar\ov{s_0} = \os, \ov{a_0} = \oa}\expectedvalue\left[\sum_{t=1}^\infty \gamma^t \ov{R}(\os_t, \oa_t)\condbar \ov{s_1} = \os'\right] \\
-    &= \ov{R}(\os, \oa) + \gamma\sum_{\os'\in\ocS}\ov{P}\left(\os' \condbar\os, \oa\right) \expectedvalue\left[\sum_{t=0}^\infty \gamma^t \ov{R}(\os_t, \oa_t) \condbar \ov{s_0} = \os'\right] \\
-    &=  \ov{R}(\os, \oa) + \gamma\sum_{\os'\in\ocS}\ov{P}\left(\os' \condbar\os, \oa\right) V^\pi(\os')
+    Q^\pi(\os, \oa) &= \expectedvalue\left[\sum_{t=0}^\infty \gamma^t R(\os_t, \oa_t)\condbar \ov{s_0} = \os, \ov{a_0} = \oa\right] \\
+    &= R(\os, \oa) + \sum_{\os'\in\ocS}\probability{\os_1 = \os' \condbar\ov{s_0} = \os, \ov{a_0} = \oa}\expectedvalue\left[\sum_{t=1}^\infty \gamma^t R(\os_t, \oa_t)\condbar \ov{s_1} = \os'\right] \\
+    &= R(\os, \oa) + \gamma\sum_{\os'\in\ocS}\ov{P}\left(\os' \condbar\os, \oa\right) \expectedvalue\left[\sum_{t=0}^\infty \gamma^t R(\os_t, \oa_t) \condbar \ov{s_0} = \os'\right] \\
+    &=  R(\os, \oa) + \gamma\sum_{\os'\in\ocS}\ov{P}\left(\os' \condbar\os, \oa\right) V^\pi(\os')
 \end{align*}
 \end{proof}
 
@@ -172,7 +173,7 @@ The same reasoning can be made for $Q_c^*$ by replacing $\max$ operators by $\mi
 
 %Define $\pi = (1-p)(\pi_1(\cdot, \beta^1), \pi_1) + p(\pi_2(\cdot, \beta^2), \pi_2)$. By linearity of $V^\pi$ with respect to $\pi$, we have that $V_c^\pi(s', \beta^3) = (1-p)V_c^{\pi_1}(s', \beta^1) + pV_c^{\pi_2}(s', \beta^2) \leq (1-p)\beta^1 + p\beta^2 = \beta^3$ since $\pi_1, \pi_2\in\Pi^*(s')\subset\Pi_a(s')$, so $\pi$ respects the budget $\beta^3$. Moreover, we also have $V_r^\pi(s', \beta^3) = (1-p)V_r^{\pi_1}(s', \beta^1) + pV_r^{\pi_2}(s', \beta^2) > V_r^*(s', \beta^3)$, which contradicts the definition of $V_r^*$.
 
-%Consequently, $V_r^*(s', \cdot)$ is non-decreasing and concave. By \eqref{eq:bellman_expectation_Q} we see that $Q_r^*(s,a,\cdot) = R(s,a) + \gamma\expectedvalueover{s'}V_r^*(s', \cdot)$  is too.
+%Consequently, $V_r^*(s', \cdot)$ is non-decreasing and concave. By \eqref{eq:bellman_expectation_Q} we see that $Q_r^*(s,a,\cdot) = R_r(s,a) + \gamma\expectedvalueover{s'}V_r^*(s', \cdot)$  is too.
 
 
 %\end{proof}
@@ -204,7 +205,6 @@ Let $A$ be a set, and $f$ a function defined on $A$. We define:
 \begin{proof}
 Let $\os=(s,\beta)\in\ocS$ and $Q\in(\Real^2)^{\ocS\ocA}$. We recall the definition of $\pi_\text{greedy}$:
 \begin{subequations}
-\label{eq:pi_greedy}
 \begin{equation}
     \pi_\text{greedy}(\oa|\os; Q) \in \argmin_{\rho\in\Pi_r^Q} \expectedvalueover{\oa\sim\rho}Q_c(\os, \oa) \tag{\ref{eq:pi_greedy_cost}}
 \end{equation}
@@ -216,7 +216,7 @@ Let $\os=(s,\beta)\in\ocS$ and $Q\in(\Real^2)^{\ocS\ocA}$. We recall the definit
 
 Note that any policy in the $\argmin$ in \eqref{eq:pi_greedy_cost} is suitable to compute $\cT$.
 We first reduce the set of candidate optimal policies.
-Consider the problem described in \eqref{eq:pi_greedy_reward},\eqref{eq:pi_greedy_constraint}: it can be seen as a single-step CMDP problem with reward $R=Q_r$ and cost $C=Q_c$. By \citep[Theorem 4.4][]{BEUTLER1985236}, we know that the solutions are mixtures of two deterministic policies. Hence, we can replace $\cM(\cA)$ by $\cC^2(\delta(\ocA))$ in \eqref{eq:pi_greedy_reward}.
+Consider the problem described in \eqref{eq:pi_greedy_reward},\eqref{eq:pi_greedy_constraint}: it can be seen as a single-step CMDP problem with reward $R_r=Q_r$ and cost $R_c=Q_c$. By \citep[Theorem 4.4][]{BEUTLER1985236}, we know that the solutions are mixtures of two deterministic policies. Hence, we can replace $\cM(\cA)$ by $\cC^2(\delta(\ocA))$ in \eqref{eq:pi_greedy_reward}.
 
 Moreover, remark that:
 \begin{align*}
@@ -229,68 +229,53 @@ Hence, the problem \eqref{eq:pi_greedy_reward}, \eqref{eq:pi_greedy_constraint} 
 \begin{equation*}
     \tilde{\Pi}^Q_r = \argmax_{(q_r, q_c)\in\cC^2(Q(\os, \ocA))} q_r \quad\text{ s.t. }\quad q_c \leq \beta 
 \end{equation*}
-and the solution space for $\pi_\text{greedy}$ is $q^*=\argmin_{q\in\tilde{\Pi}^Q_r} q_c$. 
+and the solution of $\pi_\text{greedy}$ is $q^*=\argmin_{q\in\tilde{\Pi}^Q_r} q_c$. 
 
 The original problem in the space of actions $\ocA$ is now expressed in the space of values $Q(\os, \ocA)$ (which is why we use $=$ instead of $\in$ before $\argmin$ here, see Remark \ref{rmk:independence}).
 
 We further restrict the search space of $q^*$ following two observations:
 \begin{enumerate}
-    \item $q^*$ belongs to the \emph{undominated} points $\cC^2(Q(\os,\ocA)^-)$:
-    \begin{equation*}
-        Q(\os,\ocA)^- = \{q\in Q(\os,\ocA): q_c \leq q_c^{\pm} = \min_{q^+\in Q^+} q_c^+\}\text{ with }Q^+ = \argmax_{q\in Q(\os,\ocA)} q_r
-    \end{equation*}
+    \item $q^*$ belongs to the \emph{undominated} points $\cC^2(Q^-)$:
+    \begin{align}
+        \label{eq:q_minus_undominated}
+        Q^+ &= \{(q_c, q_r): q_c > q_c^{\pm} = \min_{q^+} q_c^+\text{ s.t. }q^+\in\argmax_{q\in Q(\os,\ocA)} q_r\}\\
+        Q^- &= Q(\os,\ocA) \setminus Q^+
+    \end{align}
     Denote $q^*$ = $(1-\lambda) q^1 + \lambda q^2$, with $q^1, q^2\in Q(\os,\ocA)$. There are three possible cases:
     \begin{enumerate}
-        \item $q^1, q^2 \not\in Q(\os,\ocA)^-$. Then $q_c^* = (1-\lambda) q^1_c + \lambda q^2_c > q_c^{\pm}$. But then $q_c^{\pm} < q_c^* \leq \beta$ so $q^{\pm}\in\tilde{\Pi}^Q_r$ with a strictly lower $q_c$ than $q^*$, which contradicts the $\argmin$.
-        \item $q^1\in Q(\os,\ocA)^-, q^2 \not\in Q(\os,\ocA)^-$. But then consider the mixture $q^\top = (1-\lambda) q^1 + \lambda q^\pm$. Since $q_r^{\pm} \geq q_r^{2}$ and $q_r^{\pm} < q_r^{2}$, we also have $q^\top_r \geq q_r^*$ and $q^\top_c < q_c^*$, which also contradicts the $\argmin$.
-        \item $q^1\in Q(\os,\ocA)^-$ is the only remaning possibility.
+        \item $q^1, q^2 \not\in Q^-$. Then $q_c^* = (1-\lambda) q^1_c + \lambda q^2_c > q_c^{\pm}$. But then $q_c^{\pm} < q_c^* \leq \beta$ so $q^{\pm}\in\tilde{\Pi}^Q_r$ with a strictly lower $q_c$ than $q^*$, which contradicts the $\argmin$.
+        \item $q^1\in Q^-, q^2 \not\in Q^-$. But then consider the mixture $q^\top = (1-\lambda) q^1 + \lambda q^\pm$. Since $q_r^{\pm} \geq q_r^{2}$ and $q_r^{\pm} < q_r^{2}$, we also have $q^\top_r \geq q_r^*$ and $q^\top_c < q_c^*$, which also contradicts the $\argmin$.
+        \item $q^1,q^2\in Q^-$ is the only remaining possibility.
     \end{enumerate}
-    \item $q^*$ belongs to the \emph{top frontier} $\cC^2(\cF_Q)$:
+    \item $q^*$ belongs to the \emph{top frontier} $\cF$:
     \begin{equation*}
-        \cF_Q = \{q\in Q(\os, \ocA)^-: \not\exists q'\in Q(\os, \ocA)^-: q_c=q_c'\text{ and }q_r<q_r'\}
+        \cF_Q = \{q\in \cC^2(Q^-): \not\exists q'\in \cC^2(Q^-): q_c=q_c'\text{ and }q_r<q_r'\}
     \end{equation*}
-    Again, denote $q^*$ = $(1-\lambda) q^1 + \lambda q^2$, with $q^1, q^2\in Q(\os,\ocA)^-$.
-    If either $q^1$ or $q^2$ do not belong to $\cF_Q$, they can be replaced in $q^\top = (1-\lambda) q^{1'} + \lambda q^{2'}$ by a $q^{i'}$ with equal $q_c$ and strictly higher $q_r$, which makes $q^\top$ a strictly better candidate than $q^*$ and contradicts the $\argmax$.
+    Trivially, otherwise q' would be a better candidate than $q^*$.
 \end{enumerate}
 
 
-
-
-TODO : $\cF_Q$ is "strictly increasing" (quel sens pour un set ??)
-
-TODO : $\cF_Q$ is "concave" (quel sens pour un set ??)
-
-We construct the optimal mixture as follow : 
-
-\textbf{Regular case} If it exists $\ox$ such that $Q_c(\ov{s},\ox) \geq \beta$ then $q^* = \lambda Q(\ov{s},\oa_0) + (1-\lambda) Q(\ov{s},\oa_1)$ with $(Q(\ov{s},\oa_0),Q(\ov{s},\oa_1)) \in \cF_Q\times \cF_Q$ .
-
-The constraint value of Q for $\oa_0$ and $\oa_1$ must flank the budget: $Q_c(\ov{s},\oa_0) \leq \beta \leq Q_c(\ov{s},\oa_1)$. This condition  is verified by contradiction : 
-
+Let us characterise this frontier $\cF$. It is both:
 \begin{enumerate}
-    \item if $Q_c(\ov{s},\oa_0) > \beta$ and $Q_c(\ov{s},\oa_1) > \beta$ then the constraint is violated.
-    \item If $Q_c(\ov{s},\oa_0) < \beta$ and $Q_c(\ov{s},\oa_1) < \beta$ then $q^*$ is sub-optimal as it exists $\oa_\top$ such that $Q(\ov{s},\oa_\top) \in \cF_Q$ dominates $Q(\ov{s},\oa_0)$ and $Q(\ov{s},\oa_1)$ as $\cF_Q$ is "strictly increasing".
+    \item the \emph{graph of a non-decreasing function}: $\forall q^1, q^2\in\cF$ such that $q_c^1\leq q_c^2$ then $q_r^1\leq q_r^2$.\\
+    By contradiction, if we had $q_r^1 > q_r^2$, we could define $q^\top = (1-\lambda)q^1 + \lambda q^\pm$ where $q^\pm$ is the dominant point as defined in \eqref{eq:q_minus_undominated}. By choosing $\lambda=(q^2_c-q^1_c)/(q^\pm_c-q^1_c)$ such that $q^\top_c = q_c^2$, then since $q_r^\pm \geq q_r^1 > q_r 2$ we also have $q^\top_r > q_r^2$ which contradicts $q^2\in\cF$.
+    \item the \emph{graph of a concave function}: $\forall q^1, q^2, q^3\in\cF$ such that $q_c^1\leq q_c^2 \leq q_c^3$ with $\lambda$ such that $q^2_c = (1-\lambda)q^1_c + \lambda q^3_c$, then $q_r^2 \geq (1-\lambda)q_r^1 + \lambda q_r^3$.\\
+    Trivially, otherwise the point $q^\top = (1-\lambda)q^1 + \lambda q^3$ would verify $q^\top_c=q^2_c$ and $q^\top_r > q^2_r$, which would contradict $q^2 \in\cF$.
 \end{enumerate}
 
-The $\lambda$ value is designed such that the budget is respected. Then  $\lambda = \frac{\beta - Q_c(\ov{s},\oa_0) }{Q_c(\ov{s},\oa_1) - Q_c(\ov{s},\oa_0)}$ because the line $(Q(\ov{s},\oa_0),Q(\ov{s},\oa_1))$ is strictly increasing as  $Q_c(\ov{s},\oa_0) \leq \beta \leq Q_c(\ov{s},\oa_1)$ and $Q_r(\ov{s},\oa_0) \leq Q_r(\ov{s},\oa_1)$ as $\cF_Q$ is "strictly increasing". Then,  $\lambda$ is the unique candidate such that $q_c = \beta$. 
+We denote $\cF_Q = \cF \cap Q$. Clearly, $q^*\in\cC^2(\cF_Q)$: let $q^1, q^2\in Q^-$ such that $q^* = (1-\lambda)q^1  + \lambda q^2$. First, $q^1, q^2\in Q^-\subset\cC^2(Q^-)$. Then, by contradiction, if there existed $q^{1'}$ or $q^{2'}$ with equal $q_c$ and strictly higher $q_r$, again we could build an admissible mixture $q^{\top}=(1-\lambda)q^{1'}  + \lambda q^{2'}$ strictly better than $q^*$.
 
+$q^*$ can be written as $q^* = (1-\lambda)q^1  + \lambda q^2$ with $q^1, q^2\in\cF_Q$ and, without loss of generality, $q^1_c \leq q^2_c$.
 
+\textbf{Regular case:} there exists $q^0\in\cF_Q$ such that $q^0_c \geq \beta$.
 
-The 2 candidates $\oa_0$ and $\oa_1$ are necessarily :
+Then $q^1$ and $q^2$ must flank the budget: $q_c^1 \leq \beta \leq q_c^2$. Indeed, by contradiction, if $q_c^2 \geq q_c^1 > \beta$ then $q_c^* > \beta$ which contradicts $\Pi_r^Q$. Conversely, if $q_c^1 \leq q_c^2 < \beta$ then $q^* < \beta \leq q^0_c$, which would make $q^*$ a worse candidate than $q^\top=(1-\lambda)q^* + \lambda q^0$ when $\lambda$ is chosen such that $q_c^\top=\beta$, and contradict $\Pi_r^Q$ again.
 
-\begin{align}
-\ov{a_0} = \argmin\limits_{\oz \in \ocA} (\beta - Q^c(\os,\ox))
- \text{ s.t. } Q^c(\os,\ox) \leq \beta
-\text{ and } Q(\os,\ox) \in\cF_Q\\
-\ov{a_1} = \argmin\limits_{\oz \in \ocA} (Q^c(\os,\ox) - \beta)
- \text{ s.t. } Q^c(\os,\ox) \geq \beta
-\text{ and } Q(\os,\ox) \in\cF_Q
-\end{align}
+Because $\cF$ is the graph of a non-decreasing function, $\lambda$ should be as high as possible, as long as the budget $q^*\leq\beta$ is respected. We reach the highest $q_r^*$ when $q^*_c=\beta$, that is: $\lambda=(\beta-q_c^1)/(q_c^2-q_c^1)$.
 
-Indeed, let $(\ox,\oy)$ two points such that $Q^c(\os,\ox) \leq \beta \leq Q^c(\os,\oy)$ , then it exists $(\ox',\oy')$ such that $Q^c(\os,\ox) \leq Q^c(\os,\ox') \leq \beta \leq Q^c(\os,\oy) \leq Q^c(\os,\oy)$. As $\cF_Q$ is "concave", the segment $[Q(\os,\ox'),Q(\os,\oy')]$ is above the segment  $[Q(\os,\ox),Q(\os,\oy)]$ for any abscisse between $Q_c(\os,\ox)$ and $Q(\os,\oy)$ and in particular when the abscisse is $\beta$.
+It remains to show that $q^1$ and $q^2$ are two successive points in $\cF_Q$: $\not\exists q\in\cF_Q\setminus\{q^1, q^2\}: q^1_c \leq q_c \leq q^2_c$. Otherwise, as $\cF$ is the graph of a concave function, we would have $q_r \geq (1-\mu)q_r^1 + \mu q_r^2$. $q_r$ cannot be strictly greater than $(1-\mu)q_r^1 + \mu q_r^2$ which would contradict $q^*$, but it can still be equal, which means the tree points $q, q^1, q^2$ are aligned. In fact, every points aligned with $q^1$ and $q^2$ can also be used to construct mixtures resulting in $q^*$, but among these solutions we can still choose $q^1$ and $q^2$ as the two points in $\cF_Q$ closest to $q^*$.
 
-
-
-\textbf{Degenerate case} If it doesn't exists $\ox$ such that $Q_c(\ov{s},\ox) \geq \beta$ then  $q^* =  Q(\ov{s},\oa_0)$ with $\ov{a_0} = \argmax\limits_{\oz \in \ocA} Q^r(\os,\ox)$ such that $Q(\os,\ox) \in \cF_Q$
+\textbf{Edge case:} $\forall q\in\cF_Q, q_c < \beta$. Then  $q^* =  \argmax_{q\in\cF} q_r = q^\pm =  \argmax_{q\in Q^-} q_r$
 
 \end{proof}
 
@@ -331,10 +316,15 @@ Indeed, let $(\ox,\oy)$ two points such that $Q^c(\os,\ox) \leq \beta \leq Q^c(\
 
 \section{Risk-Sensitive Exploration}
 
+We recall the Risk-Sensitive Exploration algorithm in \cref{algo:risk-sensitive-exploration}
+
+
 \input{source/risk-sensitive-explo-pseudo-code.tex}
 
 \section{Scalable Implementation of BFTQ}
 \label{sec:bftq-full}
+
+We recall the scalable version of BFTQ in \cref{algo:bftq_full}
 
 \input{source/bftq-pseudo-code.tex}
 
@@ -358,7 +348,9 @@ Fitted-Q (FTQ)~\citep{Ernst2005,Riedmiller2005} can be easily adapted for contin
 \subsection{Environments Parameters}
 \label{sec:env-parameters}
 
-\paragraph{slot-filling} The system can either understand $(\mu=\mu_u)$ or misunderstand $(\mu=\mu_m)$ with a fixed probability called the sentence error rate $ser$. Then, the speech recognition score is simulated \citep{Khouzaimi2015}: $srs = (1+\exp(-x))^{-1}$ with $x\sim N(\mu, \sigma)$. It's the confidence score of the natural language understanding module about the last utterance. On the other hand, there are no recognition errors ($ser=0$ and $srs=1$) when the user provides information using the numeric pad.
+All environments parameters are displayed in \cref{tab:param-corridors},\cref{tab:param-slot-filling} and \cref{tab:param-highway-env}.
+
+\paragraph{Remark on the slot-filling environment} When receiving an utterance, the system can either understand it $(\mu=\mu_u)$ or misunderstand it $(\mu=\mu_m)$ with a fixed probability called the sentence error rate $ser$. Then, the speech recognition score is simulated \citep{Khouzaimi2015}: $srs = (1+\exp(-x))^{-1}$ with $x\sim N(\mu, \sigma)$. It's the confidence score of the natural language understanding module about the last utterance. Note that here are no recognition errors ($ser=0$ and $srs=1$) when the user provides information using the numeric pad.
 
 \begin{table}[ht!]
     \centering
@@ -372,6 +364,7 @@ Fitted-Q (FTQ)~\citep{Ernst2005,Riedmiller2005} can be easily adapted for contin
         \bottomrule
     \end{tabularx}
     \caption{Parameters of \texttt{Corridors}}
+    \label{tab:param-corridors}
 \end{table}
 
 \begin{table}[ht!]
@@ -390,6 +383,7 @@ Fitted-Q (FTQ)~\citep{Ernst2005,Riedmiller2005} can be easily adapted for contin
         \bottomrule
     \end{tabularx}
     \caption{Parameters of \texttt{Slot-Filling}}
+    \label{tab:param-slot-filling}
 \end{table}
 
 
@@ -407,12 +401,15 @@ Fitted-Q (FTQ)~\citep{Ernst2005,Riedmiller2005} can be easily adapted for contin
     \end{tabularx}
 
     \caption{Parameters of \texttt{highway-env}}
+    \label{tab:param-highway-env}
 \end{table}
 
 \subsection{Algorithm parameters}
 \label{sec:algorithms-parameters}
 
-\begin{table}[H]
+All algorithm parameters are displayed in \cref{tab:param-algo-corridors},\cref{tab:param-algo-slot-filling} and \cref{tab:param-algo-highway-env}.
+
+\begin{table}[tp]
     \centering
     \begin{tabularx}{1.0\textwidth}{lll}
         \toprule
@@ -441,9 +438,10 @@ Fitted-Q (FTQ)~\citep{Ernst2005,Riedmiller2005} can be easily adapted for contin
 
     \end{tabularx}
     \caption{Algorithms parameters for \texttt{Corridors}}
+    \label{tab:param-algo-corridors}
 \end{table}
 
-\begin{table}[H]
+\begin{table}[tp]
     \centering
     \begin{tabularx}{1.0\textwidth}{lll}
         \toprule
@@ -471,9 +469,10 @@ Fitted-Q (FTQ)~\citep{Ernst2005,Riedmiller2005} can be easily adapted for contin
         \bottomrule
     \end{tabularx}
     \caption{Algorithms parameters for \texttt{Slot-Filling}}
+    \label{tab:param-algo-slot-filling}
 \end{table}
 %
-\begin{table}[H]
+\begin{table}[tp]
     \centering
     \begin{tabularx}{1.0\textwidth}{lll}
         \toprule
@@ -501,6 +500,7 @@ Fitted-Q (FTQ)~\citep{Ernst2005,Riedmiller2005} can be easily adapted for contin
         \bottomrule
     \end{tabularx}
     \caption{Algorithms parameters for \texttt{Highway-Env}}
+    \label{tab:param-algo-highway-env}
 \end{table}
 
 \subsection{Examples of BFTQ policies executions}

@@ -1,4 +1,4 @@
-\begin{algorithm}[H]
+\begin{algorithm}[ht!]
 \DontPrintSemicolon
 \KwData{An environment, a BFTQ solver, $W$ CPU workers}
 \KwResult{A batch of transitions $\cD$}
@@ -19,22 +19,6 @@ step episode budget $\beta \leftarrow \beta_a$
 $\pi_\text{greedy}(\cdot\sim; ~Q^*) \leftarrow\texttt{BFTQ}(\cD)$.
 }
 \Return{the batch of transitions $\cD$}
-%     \STATE 
-%     \WHILE{episode not done}
-%     \STATE Update $\epsilon$ from schedule.
-%     \STATE Sample $z\sim\mathcal{U}([0, 1])$.
-%     \IF {$z > \epsilon$}
-%     \STATE Sample $(a, \beta')$ from $(\pi_\mathcal{A}, \pi_\mathcal{B})$. \COMMENT{Exploit}
-%     \ELSE
-%     \STATE Sample ($a$, $\beta'$) from $\mathcal{U}(\Delta_{\mathcal{A}\mathcal{B}})$. \COMMENT{Explore}
-%     \ENDIF
-%     \STATE Append transition $(s, \beta, a, r', c', s')$ to batch $\mathcal{D}$.
-%     \STATE Update episode budget $\beta \leftarrow \beta'$.
-%     \ENDWHILE
-%     \ENDFOR
-%     \STATE $(\pi_\mathcal{A}, \pi_\mathcal{B}) \leftarrow\texttt{BFTQ}(\mathcal{D})$.
-%     \ENDFOR
-%     \STATE \textbf{return} the batch of transitions $\mathcal{D}$
 \caption{Risk-sensitive exploration}
 \label{algo:risk-sensitive-exploration}
 \end{algorithm}
