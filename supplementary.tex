@@ -108,6 +108,18 @@
     &= R(\os, \oa) + \gamma\sum_{\os'\in\ocS}\ov{P}\left(\os' \condbar\os, \oa\right) \expectedvalue\left[\sum_{t=0}^\infty \gamma^t R(\os_t, \oa_t) \condbar \ov{s_0} = \os'\right] \\
     &=  R(\os, \oa) + \gamma\sum_{\os'\in\ocS}\ov{P}\left(\os' \condbar\os, \oa\right) V^\pi(\os')
 \end{align*}
+
+\textbf{Contraction of $\cT^\pi$:}
+Let $\pi\in\Pi, Q_1, Q_2\in(\Real^2)^{\ocS\ocA}$.
+\begin{align*}
+    \forall \os\in\ocS, \oa\in\ocA,\quad \left|\cT^\pi Q_1(\os,\oa) - \cT^\pi Q_2(\os,\oa)\right| &= \left|\gamma\expectedvalueover{\substack{\os'\sim\ov{P}(\os'|\os,\oa) \\ \oa'\sim\pi(\oa'|\os')}} Q_1(\os',\oa') - Q_2(\os',\oa')\right|\\
+    &\leq \gamma\left\|Q_1-Q_2\right\|_\infty
+\end{align*}
+Hence, $\left\|\cT^\pi Q_1  - \cT^\pi Q_2 \right\|_\infty \leq \gamma\left\|Q_1-Q_2\right\|_\infty$
+
+According to the Banach fixed point theorem, $\cT^\pi$ admits a unique fixed point.
+It can be easily verified that $Q^\pi$ is indeed this fixed point by combining the two Bellman Expectation equations \eqref{eq:bellman_expectation}.
+
 \end{proof}
 
 \subsection{Theorem \ref{thm:bellman-optimality}}
@@ -154,37 +166,10 @@ The same reasoning can be made for $Q_c^*$ by replacing $\max$ operators by $\mi
 \end{proof}
 
 \subsection{Proposition \ref{prop:greedy_optimal}}
-
-\begin{definition}
-We define the Bellman Expectation Operator $\cT^\pi$:\\
-$\forall \pi\in\Pi, Q\in(\Real^2)^{\ocS\ocA}, \os\in\ocS, \oa\in\ocA$,
-\begin{align}
-\label{eq:bellman_exepctation_operator}
-    \cT^\pi Q(\os, \oa) &= R(\os, \oa) + \gamma \sum_{\os'\in\ocS}\sum_{a'\in\ocA}\ov{P}(\os'|\os, \oa)\pi(\oa'|\os') Q(\os')
-\end{align}
-\end{definition}
-
-\begin{lemma}[Properties of $\cT^\pi$]
-\label{lemma:bellman_expectation_contraction}
-$\cT^\pi$ is a $\gamma$-contraction and $Q^\pi$ is its unique fixed point.
-\end{lemma}
 \begin{proof}
-The proof is the same as in the MDP case: let $\pi\in\Pi, Q_1, Q_2\in(\Real^2)^{\ocS\ocA}$.
-\begin{align*}
-    \forall \os\in\ocS, \oa\in\ocA,\quad \left|\cT^\pi Q_1(\os,\oa) - \cT^\pi Q_2(\os,\oa)\right| &= \left|\gamma\expectedvalueover{\substack{\os'\sim\ov{P}(\os'|\os,\oa) \\ \oa'\sim\pi(\oa'|\os')}} Q_1(\os',\oa') - Q_2(\os',\oa')\right|\\
-    &\leq \gamma\left\|Q_1-Q_2\right\|_\infty
-\end{align*}
-Hence, $\left\|\cT^\pi Q_1  - \cT^\pi Q_2 \right\|_\infty \leq \gamma\left\|Q_1-Q_2\right\|_\infty$
-
-By Banach fixed point theorem, $\cT^\pi$ admits a unique fixed point.
-It can be easily verified that $Q^\pi$ is indeed this fixed point by combining the two Bellman Expectation equations \eqref{eq:bellman_expectation_V} and \eqref{eq:bellman_expectation_Q}.
-\end{proof}
-
-We now prove the result of \Cref{prop:greedy_optimal}.
-\begin{proof}
-Notice from the definitions of $\cT$ and $\cT^\pi$ in \eqref{eq:bellman-optimality} and \eqref{eq:bellman_exepctation_operator} that $\cT$ and $\cT^{\pi_\text{greedy}(\cdot;Q^*)}$ coincide on $Q^*$. Moreover, since $Q^* = \cT Q^*$ by \cref{thm:bellman-optimality}, we have: $    \cT^{\pi_\text{greedy}(\cdot;Q^*)} Q^* = \cT Q^* = Q^*
+Notice from the definitions of $\cT$ and $\cT^\pi$ in \eqref{eq:bellman-optimality} and \eqref{eq:bellman_expectation_operator} that $\cT$ and $\cT^{\pi_\text{greedy}(\cdot;Q^*)}$ coincide on $Q^*$. Moreover, since $Q^* = \cT Q^*$ by \cref{thm:bellman-optimality}, we have: $    \cT^{\pi_\text{greedy}(\cdot;Q^*)} Q^* = \cT Q^* = Q^*
 $.
-Hence, $Q^*$ is a fixed point of $\cT^{\pi_\text{greedy}(\cdot;Q^*)}$, and by \cref{lemma:bellman_expectation_contraction} it must be equal to $Q^{\pi_\text{greedy}(\cdot;Q^*)}$
+Hence, $Q^*$ is a fixed point of $\cT^{\pi_\text{greedy}(\cdot;Q^*)}$, and by \cref{prop:bellman-expectation} it must be equal to $Q^{\pi_\text{greedy}(\cdot;Q^*)}$
 
 To show the same result for $V^*$, notice that 
 \begin{equation*}
@@ -363,14 +348,14 @@ We recall the Risk-Sensitive Exploration algorithm in \cref{algo:risk-sensitive-
 
 We recall the scalable version of BFTQ in \cref{algo:bftq_full} and the architecture of the neural network \cref{fig:architecture}.
 
-\begin{minipage}[t]{0.5\textwidth}
-\begin{figure}[H]
+%\begin{minipage}[t]{0.5\textwidth}
+\begin{figure}[tp]
     \centering
     \input{source/architecture.tex}
     \caption{Neural Network for $Q$-functions approximation when $\cS=\Real^2$ and $|\cA| = 2$.}
     \label{fig:architecture}
 \end{figure}
-\end{minipage}
+%\end{minipage}
 
 \input{source/bftq-pseudo-code.tex}
 
