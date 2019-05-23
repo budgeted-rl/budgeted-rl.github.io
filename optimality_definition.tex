@@ -1,0 +1,21 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{xargs}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage{enumerate}
+\input{mathdef.tex}
+
+\begin{document}
+
+\begin{definition}[Budgeted Optimality (tentative de Romain pour remplacer la precedente definition)]
+We want an optimal budgeted policy to: (i)~respect the cost budget $\beta$, (ii)~maximise the expected $\gamma$-discounted return of rewards, (iii)~in case of tie, minimise the expected $\gamma$-discounted return of costs. Let $V_c^\bot = \min_{\pi\in\cM(\cA)^{\cS}} V_c^\pi$ denote the minimal cost return. Let $\overline{S}_b = \{s,\beta\}_{s\in\cS, \beta\geq V_c^\bot(s)}$ denote the feasible augmented state space. To that end, we define the following:
+\begin{enumerate}[(i)]
+    \item Admissible policies set: $\Pi_a \eqdef \{\pi\in\Pi: V_c^\pi(\os=(s, \beta)) \leq \beta ;\;\; \forall \os\in\overline{S}_b\}$
+    \item Candidate policies set: $\Pi_r \eqdef \argmax_{\pi\in\Pi_a}  V_r^\pi$
+    \item Optimal policies set: $\Pi^* \eqdef \argmin_{\pi\in\Pi_r}  V_c^\pi$
+\end{enumerate}
+Additionally, let $V^* = (V_r^*, V_c^*)$ and $Q^* = (Q_r^*, Q_c^*)$ denote the values of the optimal policies in $\Pi^*$.
+\end{definition}
+\end{document}

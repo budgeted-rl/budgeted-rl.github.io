@@ -178,6 +178,167 @@ To show the same result for $V^*$, notice that
 By applying the definitions of $Q^*$ and $\pi_\text{greedy}$, we recover the definition of $V^*$.
 \end{proof}
 
+\subsection{Theorem \ref{thm:contraction}}
+\label{sec:proof_contraction}
+In the trivial case $|\cA| = 1$, there exits only one policy $\pi$ and $\cT = \cT^\pi$, which is a contraction by \cref{prop:bellman-expectation}.
+
+In the general case $|\cA| \geq 2$, we can build the following counter-example:
+
+Let $(\cS, \cA, P, R_r, R_c)$ be a BMDP.
+For any $0 < \epsilon < 1$, we define $Q_\epsilon^1$ and $Q_\epsilon^2$ as:
+
+\begin{align*}
+      Q_\epsilon^1(\os,\oa) =
+      \begin{cases}
+    (0, 1), & \text{if } a = a_0 \\
+    (\frac{1}{\epsilon}, 1+\epsilon), & \text{if } a \neq a_0
+  \end{cases}\\
+  Q_\epsilon^2(\os,\oa) =
+      \begin{cases}
+    (1, 0), & \text{if } a = a_0 \\
+    (1+\frac{1}{\epsilon}, \epsilon), & \text{if } a \neq a_0
+  \end{cases}
+\end{align*}
+Then, $\|Q_1-Q_2\|_\infty = 1$.
+ $Q_\epsilon^1$ and $Q_\epsilon^2$ are represented in \cref{fig:concavity_example}.
+
+\begin{figure}[tp]
+    \centering
+    \includegraphics[width=0.5\textwidth]{source/img/concavity_example.pdf}
+    \caption{Representation of $Q_\epsilon^1$ (blue) and $Q_\epsilon^2$ (yellow)}
+    \label{fig:concavity_example}
+\end{figure}
+
+But for $\oa=(a,\beta_a)$ with $\beta_a = 1+\epsilon/2$, we have:
+\begin{align*}
+    \|\cT Q_\epsilon^1(\os, \oa) - \cT Q_\epsilon^2(\os, \oa)\|_\infty &= \gamma\left\|\expectedvalueover{\os'\sim\ov{P}(\os'|\os,\oa)} \expectedvalueover{\oa'\sim\pi_\text{greedy}(Q^1_\epsilon)}Q^1_\epsilon(\os',\oa') - \expectedvalueover{\oa'\sim\pi_\text{greedy}(Q^2_\epsilon)}Q^2_\epsilon(\os',\oa')\right\|_\infty \\
+    &= \gamma\left\|\expectedvalueover{\os'\sim\ov{P}(\os'|\os,\oa)}(\frac{1}{2\epsilon}, 1+\frac{\epsilon}{2}) - (1+\frac{1}{\epsilon},\epsilon )\right\|_\infty \\
+    &= \gamma(1+\frac{1}{2\epsilon})
+\end{align*}
+Hence, $\|\cT Q_\epsilon^1 - \cT Q_\epsilon^2\|_\infty \geq \gamma(1+\frac{1}{2\epsilon})$
+
+As a conclusion, there does not exist $L>0$ such that:
+$$\forall Q_1,Q_2\in(\Real^2)^{\ocS\ocA}, \|\cT Q^1 - \cT Q^2\|_\infty \leq L \|Q^1 - Q^2\|_\infty$$
+In other words, $\cT$ is not a contraction for $\|\cdot\|_\infty$.
+
+\textbf{Restriction to smooth $Q$-functions.} We now study the contractivity of $\cT$ when restricted to the functions of $\cL_\gamma$ defined as follows:
+\begin{equation}
+    \cL_\gamma = \left\{\begin{array}{cc}
+         Q\in(\Real^2)^{\ocS\ocA}\text{ s.t. }\exists L<\frac{1}{\gamma}-1: \forall \os\in\ocS,\oa_1,\oa_2\in\ocA,   \\
+         |Q_r(\os,\oa_1) - Q_r(\os,\oa_2)| \leq L|Q_c(\os,\oa_1) - Q_c(\os,\oa_2)|
+    \end{array}\right\}
+\end{equation}
+That is, for all state $\os$, the set $Q(\os, \ocA)$ plot in the $(Q_c,Q_r)$ plane must be the \emph{graph} of a $L$-Lipschitz function, with $L<1/\gamma-1$.
+
+We impose such structure for the following reason: the counter-example presented above prevented contraction because it was a pathological case in which the slope of $Q$ can be arbitrary large. As a consequence, when solving $Q_r^*$ such that $Q_c^*=\beta$, a vertical slice of a $\|\cdot\|_\infty$ ball around $Q_1$ (which must contain $Q_2$) can be arbitrary large as well.
+
+This sketch of proof makes use of insights detailed in the proof of \cref{prop:bftq_pi_hull}, which we recommend the reader to consult first.
+
+We denote $\cB(Q,R)$ the ball of centre $Q$ and radius $R$ for the $\|\cdot\|_\infty$-norm:
+\begin{equation*}
+    \cB(Q,R) = \{Q'\in(R^2)^{\ocS\ocA}: \|Q-Q'\|_\infty \leq R\}
+\end{equation*}
+
+We give the three main steps required to show that $\cT$ restricted to $\cL_\gamma$ is a contraction. Given $Q^1, Q^2\in\cL_\gamma$, show that:
+\begin{enumerate}
+    \item $Q^2\in\cB(Q^1,R)\implies\cF^2\in\cB(\cF^1, R), \forall\os\in\ocS$, where $\cF$ is the top frontier of the convex hull of undominated points, as defined in \cref{sec:proof_pi_hull}.
+    \item $Q\in\cL_\gamma \implies \cF$ is the graph of a $L$-Lipschitz function, $\forall\os\in\ocS$.
+    \item taking the slice $Q_c=\beta$ of a ball $\cB(\cF,R)$ with $\cF$ $L$-Lipschitz results in an interval on $Q_r$ of range at most $(L+1)R$
+\end{enumerate}
+
+These three steps will allow us to control $Q_r^{2*} - Q_r^{1*}$ as a function of $R = \|Q^2-Q^1\|_\infty$.
+
+\textbf{Step 1:} we want to show that if $Q^1$ and $Q^2$ are close, then $\cF^1$ are $\cF^2$ are close as well in the following sense:
+\begin{align}
+    \cF^2\in\cB(\cF^1, R) &\iff d(\cF^1, \cF^2) \leq R \iff \max_{q^2\in\cF^2}\min_{q^1\in\cF^1}\|q^2-q^1\|_\infty \leq R
+    \label{eq:ball-set}
+\end{align}
+Assume $Q^2\in\cB(Q^1,R)$.
+We start by showing this result for $\cC^2(Q^{1-})$ and $\cC^2(Q^{2-})$ as defined in \cref{sec:proof_pi_hull}:
+
+Let $\os\in\ocS$ and $q^2\in\cC^2(Q^{2-})$, $\exists\lambda\in[0,1], \oa_1,\oa_2\in\ocA: q^2 = (1-\lambda)Q^2(\os,\oa_1) + \lambda Q^2(\os,\oa_2)$. Define $q^1 = (1-\lambda)Q^1(\os,\oa_1) + \lambda Q^1(\os,\oa_2)$. Then 
+\begin{align*}
+    \|q^2-q^1\|_\infty &= \|(1-\lambda)(Q^2(\os,\oa_1) - Q^1(\os,\oa_1)) + \lambda (Q^2(\os,\oa_2) - Q^1(\os,\oa_2))\|_\infty\\
+    &\leq  (1-\lambda)\|Q^2(\os,\oa_1) - Q^1(\os,\oa_1)\|_\infty + \lambda \|Q^2(\os,\oa_2) - Q^1(\os,\oa_2)\|_\infty\\
+    &\leq (1-\lambda)R+\lambda R = R
+\end{align*}
+
+It remains to show that when taking the top frontiers of the convex sets $\cC^2(Q^{1-})$ and $\cC^2(Q^{2-})$, they remain at a distance of at most $R$.
+
+This is illustrated in \cref{fig:contraction_lips_hull}: given a function $Q^1$, we show the locus $\cB(Q_1,R)$ of $Q^2$. We then draw $\cF^1$ the top frontier of the convex hull of $Q^1$ and alongside the locus of all possible $\cF^2$, which belong to a ball $\cB(\cF^1, R)$. 
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[trim=7cm 4cm 7cm 4cm, clip, width=0.7\textwidth]{source/img/contraction_lipschitz.pdf}
+    \caption{We represent the range of possible solutions $Q_r^{2,*}$ for any $Q^2\in\cB(Q^1)$, given $Q_1\in\cL_\lambda$}
+    \label{fig:contraction_lips_hull}
+\end{figure}
+
+\textbf{Step 2:} We want to show that if $Q\in\cL_\gamma$, $\cF$ is the graph of an $L$-Lipschitz function:
+\begin{equation}
+\label{eq:L-lip-set}
+    \forall q^1,q^2\in\cF, |q_r^2-q_r^1| \leq |q_c^2-q_c^1|
+\end{equation}
+
+Let $Q\in\cL_\gamma$ and $\os\in\ocS$, $\cF$ the corresponding top frontier of convex hull.
+For all $q^1,q^2\in\cF, \exists \lambda,\mu\in[0,1], q^{11},q^{12},q^{21},q^{22}\in Q(\os,\ocA)$ such that $q^1 = (1-\lambda)q^{11} + \lambda q^{12}$ and $q^2 = (1-\mu)q^{21} + \mu q^{22}$.
+Without loss of generality, we can assume $q_c^{11}\leq q_c^{12}$ and $q_c^{21}\leq q_c^{22}$. We also consider the worst case in terms of maximum $q_r$ deviation: $q_c^{12} \leq q_c^{21}$.
+Then the maximum increment $q_r^2-q_r^{1}$ is:
+\begin{align*}
+    \|q^2_r-q^{1}_r\| &\leq \|q^{12}_r-q^{1}_r\| + \|q^{21}_r-q^{12}_r\| + \|q^{2}_r-q^{21}_r\| \\
+    &= (1-\lambda)\|q^{12}_r-q^{11}_r\| + \|q^{21}_r-q^{12}_r\| + \mu\|q^{22}_r-q^{21}_r\| \\ 
+    &\leq (1-\lambda)L\|q^{12}_c-q^{11}_c\| + L\|q^{21}_c-q^{12}_c\| + \mu L\|q^{22}_c-q^{21}_c\| \\
+    &= L\|q^{12}_c-q^{1}_c\| + L\|q^{21}_c-q^{12}_c\| + L\|q^{2}_c-q^{21}_c\|\\
+    &= L\|q^{2}_c-q^{1}_c\|
+\end{align*}
+
+This can also be seen in \cref{fig:contraction_lips_hull}: the maximum slope of the $\cF^1$ is lower than the maximum slope between two points of $Q^1$.
+
+\textbf{Step 3:} Let $\cF_1$ be a L-Lipschitz set as defined in \eqref{eq:L-lip-set}, and consider a ball $\cB(\cF_1,R)$ around it as defined in \eqref{eq:ball-set}.
+
+We want to bound the optimal reward value $Q_r^{2*}$ under constraint $Q_c^{2*} = \beta$ (regular case in \cref{sec:proof_pi_hull} where the constraint is saturated), for any $\cF^2\in\cB(\cF_1,R)$. This quantity is represented as a red double-ended arrow in \cref{fig:contraction_lips_hull}.
+
+Because we are only interested in what happens locally at $Q_c=\beta$, we can zoom in on \cref{fig:contraction_lips_hull} and only consider a thin $\epsilon$-section around $\beta$. In the limit $\epsilon\rightarrow 0$, this section becomes the tangent to $\cF^1$ at $Q_c^1=\beta$. It is represented in \cref{fig:contraction_lips_hull_slope}, from which we derive a geometrical proof:
+\begin{figure}[ht]
+    \centering
+    \includegraphics[trim=2cm 1cm 2cm 1cm, clip, width=0.7\textwidth]{source/img/contraction_lipschitz_slope.pdf}
+    \caption{We represent a section $[\beta-\epsilon, \beta+\epsilon]$ of $\cF^1$ and $B(\cF^1, R)$. We want to bound the range of $Q_r^{2*}.$}
+    \label{fig:contraction_lips_hull_slope}
+\end{figure}
+
+\begin{align*}
+    \Delta Q_r^{2*} &= b + c &\\
+    & \leq La + c & \text{($\cF^1$ $L$-Lipschitz)}\\
+    &= 2LR+2R = 2R(L+1)
+\end{align*}
+Hence,
+\begin{equation*}
+    | Q_r^{2*} - Q_r^{1*}| \leq \frac{\Delta Q_r^{2*}}{2} = R(L+1)
+\end{equation*}
+
+and $Q_c^{1*} = Q_c^{2*} = \beta$.
+Consequently, $ \|Q^{2*} - Q^{1*}\|_\infty \leq (L+1)R$
+
+For completeness, the edge case in \cref{sec:proof_pi_hull} should be considered as well.
+
+\textbf{Wrapping it up:}
+
+We've shown that for any $Q^1,Q^2\in\cL_\gamma$, and all $\os\in\ocS$, $\cF^2\in\cB(\cF^1,\|Q^2-Q^1\|_\infty)$ and $\cF^1$ is the graph of a $L$-Lipschitz function with $L<1/\gamma - 1$. Moreover, the solutions of $\pi_\text{greedy}(Q^1)$ and $\pi_\text{greedy}(Q^2)$ at $\os$ are such that $ \|Q^{2*} - Q^{1*}\|_\infty \leq (L+1)\|Q^2-Q^1\|_\infty$.
+
+Hence, for all $\oa$,
+\begin{align*}
+    \|\cT Q^1(\os, \oa) - \cT Q^2(\os, \oa)\|_\infty &= \gamma\left\|\expectedvalueover{\os'\sim\ov{P}(\os'|\os,\oa)} \expectedvalueover{\oa'\sim\pi_\text{greedy}(Q^1)}Q^1(\os',\oa') - \expectedvalueover{\oa'\sim\pi_\text{greedy}(Q^2)}Q^2(\os',\oa')\right\|_\infty \\
+    &= \gamma\left\|Q^{2*} - Q^{1*}\right\|_\infty \\
+    &\leq \gamma(L+1)\|Q^2-Q^1\|_\infty
+\end{align*}
+Taking the sup on $\ocS\ocA$,
+
+\begin{equation*}
+    \|\cT Q^1 - \cT Q^2\|_\infty \leq \gamma(L+1)\|Q^1-Q^2\|_\infty
+\end{equation*}
+with $\gamma(L+1) < 1$.
+As a conclusion, $\cT$ is a $\gamma(L+1)$-contraction on $\cL_\gamma$.
+
 %\subsection{Lemma \ref{lemma:concavity}}
 
 %\begin{proof}. Let $s,s'\in\cS, a\in\cA$.
@@ -213,6 +374,7 @@ By applying the definitions of $Q^*$ and $\pi_\text{greedy}$, we recover the def
 
 
 \subsection{Proposition \ref{prop:bftq_pi_hull}}
+\label{sec:proof_pi_hull}
 \begin{definition}
 Let $A$ be a set, and $f$ a function defined on $A$. We define:
 
@@ -359,10 +521,8 @@ We recall the scalable version of BFTQ in \cref{algo:bftq_full} and the architec
 
 \input{source/bftq-pseudo-code.tex}
 
-\section{Experiments}
-
-\subsection{The Lagrangian Relaxation Baseline}
-
+\section{The Lagrangian Relaxation Baseline}
+\label{sec:lagragian}
 As explained on \cref{fig:Lagrangian}, the optimal deterministic policy can be obtained by a line-search on the Lagrange multiplier values $\lambda$.
 
 Then, according to \citet[Theorem 4.4]{BEUTLER1985236}, the optimal policy is a randomised mixture of two deterministic policies: the safest deterministic policy that violates the constraint $\pi_{\lambda-}$ and the riskier of the feasible ones $\pi_{\lambda+}$.
@@ -376,7 +536,39 @@ Fitted-Q (FTQ)~\citep{Ernst2005,Riedmiller2005} can be easily adapted for contin
     \label{fig:Lagrangian}
 \end{figure}
 
-\subsection{Environments Parameters}
+
+\section{Experiments}
+
+
+
+\subsection{Examples of different exploration strategies}
+\label{subsec:exploration-examples}
+We compare two approaches for constructing a batch of samples. The animations from \url{exploration.html} display the trajectories collected in each intermediate sub-batch. The first row corresponds to a classical  risk neutral epsilon-greedy exploration policy while the second row showcases a risk-sensitive exploration strategy introduced in the paper. Each animation corresponds to a different seed.
+
+\subsection{Examples of BFTQ policies executions}
+\label{sec:bftq-executions}
+
+We display the evolution in the budgeted policy behavior with respect to the budget on different environments. The policies have been learnt with a risk-sensitive exploration.
+
+\paragraph{Highway-Env}
+
+On the \texttt{highway-env} , the budgeted agents display a wide variety of behaviours. Animations are displayed on the html page \url{highway-env.html}. When $\beta = 1$, the ego-vehicle drives in a very aggressive style: it immediately switches to the opposite lane and drives as fast as possible to pass slower vehicles, swiftly changing lanes to avoid incoming traffic. On the contrary when $\beta = 0$, the ego-vehicle is conservative: it stays on its lane and drives at a low velocity. With intermediate budgets such as $\beta = 0.2$, the agent sometimes decides to overtake its front vehicle but promptly steers back to its original lane afterwards.
+
+\paragraph{Slot-filling}
+
+In \cref{table:dialogues}, we display two dialogues done with the same BFTQ policy on \texttt{Slot-Filling}. The policy is given two budgets to respect in expectation, $\beta=0$ and $\beta=0.5$. For budget 0, one can see that the system never uses the \texttt{ask\_num\_pad} action. Instead, it uses \texttt{ask\_oral} , an action subject to recognition errors. The system keeps asking for the same slot 2, because it has the lowest speech recognition score. It eventually summarizes the form to the user, but then reaches the maximum dialogue length and thus faces a dialogue failure. For budget 0.5, the system first asks in a safe way, with \texttt{ask\_oral}. It may want to \texttt{ask\_num\_pad} if one of the speech recognition score is low. Then, the system proceeds to a confirmation of the slot values. If it is incorrect, the system continues the dialogue using unsafe the \texttt{ask\_num\_pad} action to be certain of the slot values.
+
+\input{source/dialogues.tex}
+
+\paragraph{Corridors}
+
+Animations are displayed on the html page \url{corridors.html} for the \texttt{Corridors} environment. When the budget is low, the agent takes the safest path on the left. When the budget increases, it gradually switches to the other lane, earning higher rewards but also costs. This gradual process could not be achieved with a deterministic policy as it would chose either one path or the other. Each animation corresponds to a different seed.
+
+\subsection{Reproducibility}
+
+The following section displays environments and algorithms parameters and instructions to reproduce the exact same results displayed in \cref{sec:experiements}.
+
+\subsubsection{Environments Parameters}
 \label{sec:env-parameters}
 
 All environments parameters are displayed in \cref{tab:param-corridors},\cref{tab:param-slot-filling} and \cref{tab:param-highway-env}.
@@ -435,7 +627,7 @@ All environments parameters are displayed in \cref{tab:param-corridors},\cref{ta
     \label{tab:param-highway-env}
 \end{table}
 
-\subsection{Algorithm parameters}
+\subsubsection{Algorithm parameters}
 \label{sec:algorithms-parameters}
 
 All algorithm parameters are displayed in \cref{tab:param-algo-corridors},\cref{tab:param-algo-slot-filling} and \cref{tab:param-algo-highway-env}.
@@ -534,14 +726,30 @@ All algorithm parameters are displayed in \cref{tab:param-algo-corridors},\cref{
     \label{tab:param-algo-highway-env}
 \end{table}
 
-\subsection{Examples of BFTQ policies executions}
-\label{sec:bftq-executions}
+\subsubsection{Instructions for reproducibility}
 
-In \cref{table:dialogues}, we display two dialogues done with the same BFTQ policy. The policy is given two budgets to respect in expectation,$\beta=0$ and $\beta=0.5$. For budget 0, one can see that the system never uses the \texttt{ask\_num\_pad} action. Instead, it uses \texttt{ask\_oral} , an action subject to recognition errors. The system keeps asking for the same slot 2, because it has the lowest speech recognition score. It eventually summarizes the form to the user, but then reaches the maximum dialogue length and thus faces a dialogue failure. For budget 0.5, the system first asks in a safe way, with \texttt{ask\_oral}. It may want to \texttt{ask\_num\_pad} if one of the speech recognition score is low. Then, the system proceeds to a confirmation of the slot values. If it is incorrect, the system continues the dialogue using unsafe the \texttt{ask\_num\_pad} action to be certain of the slot values.
+To reproduce the result displayed in \cref{sec:experiements}, first install the following conventional libraries for python3: pycairo, numpy, scipy and pytorch. Then execute the commands recall in \cref{fig:instructions} on a Linux Operating System. The Graphic Processing Unit used for experiments is an NVDIA \texttt{GeForce GTX 1080 Ti} and the Computational Processing Unit is an Intel \texttt{Xeon E7}.
 
-\input{source/dialogues.tex}
+\begin{figure}
+    \centering
+    
 
-
+\begin{minted}{sh}
+# Install highway-env
+pip3 install --user git+https://github.com/eleurent/rl-agents
+# Change python path to the path of this repository
+export PYTHONPATH="code/scaling-up-brl"
+# Navigate to budgeted-rl folder
+cd code/scaling-up-brl/budgeted-rl/
+# Run main script using any config file
+# Choose the range of seeds you want to test on
+python3 main/egreedy/main-egreedy.py config/slot-filling.json 0 6
+python3 main/egreedy/main-egreedy.py config/corridors.json 0 4
+python3 main/egreedy/main-egreedy.py config/highway-easy.json 0 10
+\end{minted}
+\caption{Insctructions to reproduce experiments}
+    \label{fig:instructions}
+\end{figure}
 
 % \clearpage
 % \bibliographystyle{named}
