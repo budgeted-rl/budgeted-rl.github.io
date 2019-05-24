@@ -11,8 +11,8 @@ $S' \leftarrow \{s_i'\}_{i\in[0, |\cD|]}$\;
    \For(\tcp*[f]{Run in parallel}){$w\in W$}{
        \For{$(\boldsymbol{\cdot},\boldsymbol{\cdot},\beta_{a_i},{R_r}_i,{R_c}_i,s'_i) \in \mathcal{D}$} {
            $\cP \leftarrow \{(Q_c(s_i',\cA,\tilde{\cB}), Q_r(s_i',\cA,\tilde{\cB}))\}$\;
+           $\cP.\texttt{prune}()$ \tcp*[f]{Remove all dominated points}\;
            $\cH \leftarrow \texttt{convex\_hull}(\cP).\text{vertices}()$\tcp*[f]{in cw order}\;
-           $\cH.\texttt{prune}()$ \tcp*[f]{Remove all dominated points}\;
            $k \leftarrow \min\{k: \beta_i \geq q_c$ with $\left(q_c,q_r\right) = \cH[k]\}$\;
            $q_c^2,q_r^2,q_c^1,q_r^1 \leftarrow \cH[k],\cH[k-1]$\;
            $p \leftarrow (\beta_{a_i} - q_a^1) / (q_c^2 - q_c^1)$\;
