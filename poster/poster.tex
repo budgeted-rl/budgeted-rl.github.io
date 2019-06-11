@@ -1,0 +1,205 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% baposter Landscape Poster
+% LaTeX Template
+% Version 1.0 (15/5/13)
+%
+% Created by:
+% Brian Amberg (baposter@brian-amberg.de)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[paperwidth=36in, paperheight=48in,portrait,fontscale=0.35, margin=2cm]{baposter}
+
+\usepackage[utf8]{inputenc}
+\usepackage[font=normalsize,labelfont=bf]{caption} % Required for specifying captions to tables and figures
+\captionsetup{justification=centering}
+\usepackage{booktabs} % Horizontal rules in tables
+\usepackage{lmodern}
+\usepackage{relsize} % Used for making text smaller in some places
+
+% Other packages
+\usepackage{tabularx}
+\def\tabularxcolumn#1{m{#1}}
+\def\imagetop#1{\vtop{\null\hbox{#1}}}
+\usepackage{adjustbox}
+\usepackage{subfig}
+\usepackage{floatrow} % sidecapfloat
+\usepackage{setspace}
+\usepackage{xspace}
+\usepackage{noReferences}
+\usepackage{caption}
+\usepackage{tikz}
+\usepackage[customcolors]{hf-tikz}
+%\usepackage{subcaption}
+\usepackage{epsf}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{dsfont}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{cases}
+\usepackage{verbatim}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{graphics}
+\usepackage{multirow}
+\usepackage{listings}
+%\usepackage[authoryear]{natbib}
+\usepackage{authblk}
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\usepackage{eqparbox}
+\usepackage{xcolor}
+\usepackage[backend=biber, citestyle=authoryear, maxcitenames=2, maxbibnames=2]{biblatex}
+\usepackage{lipsum}
+\usepackage{svg}
+
+\bibliography{../references.bib}
+
+\input{style}
+\input{../mathdef}
+
+\begin{document}
+
+
+%\background{ % Set the background to an image (background.pdf)
+%\begin{tikzpicture}[remember picture,overlay]
+%\draw (current page.north west)+(-2em,2em) node[anchor=north west]
+%{\includegraphics[height=1.1\textheight]{background.png}};
+%\end{tikzpicture}
+%}
+\begin{poster}{
+grid=false,
+borderColor=bordercol, % Border color of content boxes
+headerColorOne=headercol1, % Background color for the header in the content boxes (left side)
+headerColorTwo=headercol2, % Background color for the header in the content boxes (right side)
+headerFontColor=headerfontcol, % Text color for the header text in the content boxes
+boxColorOne=boxcolor, % Background color for the content in the content boxes
+headershape=roundedright, % Specify the rounded corner in the content box headers
+%headerfont=\Large\sf\bf, % Font modifiers for the text in the content box headers
+headerfont=\Large\bf\textsc, %Sans Serif
+textborder=rectangle,
+background=none,
+headerborder=open, % Change to closed for a line under the content box headers
+boxshade=plain,
+textfont={\setlength{\parindent}{0.0em}\sffamily},
+headerheight={0.05\textheight},
+eyecatcher=true
+%columns=5
+}
+%
+%----------------------------------------------------------------------------------------
+%	Title and authors
+%----------------------------------------------------------------------------------------
+%
+{
+\includegraphics[width=14em]{./img/renault_group}
+}
+{
+Practical Open-Loop Optimistic Planning
+}
+{
+Edouard Leurent, Odalric-Ambrym Maillard
+\vspace{-3\baselineskip}
+}
+{
+\includegraphics[width=14em]{./img/inria_sc}
+}
+
+\setlength{\colheight}{0.92\textheight}
+
+%----------------------------------------------------------------------------------------
+%	Motivation
+%----------------------------------------------------------------------------------------
+
+\headerbox{\textsc{Motivation}}{name=motivation,span=1,column=0,row=0}{
+
+}
+
+%----------------------------------------------------------------------------------------
+%	Setting
+%----------------------------------------------------------------------------------------
+\headerbox{\textsc{Open-Loop Optimistic Planning}}{name=setting,span=1,column=0,row=0,below=motivation}{
+
+
+}
+
+%----------------------------------------------------------------------------------------
+% Tools
+%----------------------------------------------------------------------------------------
+\headerbox{\textsc{What's wrong with OLOP?}}
+{name=tools,column=0,below=setting,span =1}
+{
+
+}
+
+
+%----------------------------------------------------------------------------------------
+%	KL-OLOP
+%----------------------------------------------------------------------------------------
+\headerbox{\textsc{Kullback-Leibler OLOP}}{name=klolop,column=1,span=2}{
+
+}
+
+%----------------------------------------------------------------------------------------
+%	Sample Complexity
+%----------------------------------------------------------------------------------------
+\headerbox{Sample complexity}
+{name=sample,span=2,column=1,below=klolop}{ 
+}
+
+%----------------------------------------------------------------------------------------
+%	Time and Memory Complexity
+%----------------------------------------------------------------------------------------
+\headerbox{Time and memory complexity}{name=time,span=2,column=1,below=sample}{ 
+
+}
+
+%
+%%----------------------------------------------------------------------------------------
+%% Experiments
+%%----------------------------------------------------------------------------------------
+%
+\headerbox{Experiments}{name=experiments,span=2,column=1,below=time, above=bottom}{ 
+
+}
+
+
+
+%----------------------------------------------------------------------------------------
+%	Acknowledgements
+%----------------------------------------------------------------------------------------
+% \headerbox{Acknowledgements}{name=ack,column=0,span=1,below=tools}{
+% This work has been supported by CPER Nord-Pas de Calais/FEDER DATA Advanced data science and technologies 2015-2020, the French Ministry of Higher Education and Research, INRIA, and the French Agence Nationale de la Recherche (ANR).
+% }
+
+
+%----------------------------------------------------------------------------------------
+%	References
+%----------------------------------------------------------------------------------------
+\headerbox{References}{name=refs,column=0,span=1,below=tools, above=bottom}{
+    {
+    \AtNextBibliography{\footnotesize}
+    \setlength{\bibitemsep}{3pt}
+    \printbibliography[heading=none]
+    }
+}
+
+
+\end{poster}
+
+\end{document}
+
+
