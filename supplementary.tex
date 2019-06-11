@@ -108,21 +108,21 @@ In the trivial case $|\cA| = 1$, there exits only one policy $\pi$ and $\cT = \c
 In the general case $|\cA| \geq 2$, we can build the following counter-example:
 
 Let $(\cS, \cA, P, R_r, R_c)$ be a BMDP.
-For any $0 < \epsilon < 1$, we define $Q_\epsilon^1$ and $Q_\epsilon^2$ as:
+For any $\epsilon > 0$, we define $Q_\epsilon^1$ and $Q_\epsilon^2$ as:
 
 \begin{align*}
       Q_\epsilon^1(\os,\oa) =
       \begin{cases}
-    (0, 1), & \text{if } a = a_0 \\
-    (\frac{1}{\epsilon}, 1+\epsilon), & \text{if } a \neq a_0
+    (0, 0), & \text{if } a = a_0 \\
+    \left(\frac{1}{\gamma}, \epsilon\right), & \text{if } a \neq a_0
   \end{cases}\\
   Q_\epsilon^2(\os,\oa) =
       \begin{cases}
-    (1, 0), & \text{if } a = a_0 \\
-    (1+\frac{1}{\epsilon}, \epsilon), & \text{if } a \neq a_0
+    (0, \epsilon), & \text{if } a = a_0 \\
+    \left(\frac{1}{\gamma}, 2\epsilon\right), & \text{if } a \neq a_0
   \end{cases}
 \end{align*}
-Then, $\|Q_1-Q_2\|_\infty = 1$.
+Then, $\|Q_1-Q_2\|_\infty = \epsilon$.
  $Q_\epsilon^1$ and $Q_\epsilon^2$ are represented in \Cref{fig:concavity_example}.
 
 \begin{figure}[tp]
@@ -132,15 +132,18 @@ Then, $\|Q_1-Q_2\|_\infty = 1$.
     \label{fig:concavity_example}
 \end{figure}
 
-But for $\oa=(a,\beta_a)$ with $\beta_a = 1+\epsilon/2$, we have:
+But for $\oa=(a,\beta_a)$ with $\beta_a = \epsilon$, we have:
 \begin{align*}
     \|\cT Q_\epsilon^1(\os, \oa) - \cT Q_\epsilon^2(\os, \oa)\|_\infty &= \gamma\left\|\expectedvalueover{\os'\sim\ov{P}(\os'|\os,\oa)} \expectedvalueover{\oa'\sim\pi_\text{greedy}(Q^1_\epsilon)}Q^1_\epsilon(\os',\oa') - \expectedvalueover{\oa'\sim\pi_\text{greedy}(Q^2_\epsilon)}Q^2_\epsilon(\os',\oa')\right\|_\infty \\
-    &= \gamma\left\|\expectedvalueover{\os'\sim\ov{P}(\os'|\os,\oa)}(\frac{1}{2\epsilon}, 1+\frac{\epsilon}{2}) - (1+\frac{1}{\epsilon},\epsilon )\right\|_\infty \\
-    &= \gamma(1+\frac{1}{2\epsilon})
+    &= \gamma\left\|\expectedvalueover{\os'\sim\ov{P}(\os'|\os,\oa)}\left(\frac{1}{\gamma}, \epsilon\right) - (0, \epsilon)\right\|_\infty \\
+    &= \gamma\frac{1}{\gamma} = 1
 \end{align*}
-Hence, $\|\cT Q_\epsilon^1 - \cT Q_\epsilon^2\|_\infty \geq \gamma(1+\frac{1}{2\epsilon})$
+Hence, 
+\begin{align*}
+    \|\cT Q_\epsilon^1 - \cT Q_\epsilon^2\|_\infty &\geq 1 = \frac{1}{\epsilon} \|Q_1-Q_2\|_\infty
+\end{align*}
 
-As a conclusion, there does not exist $L>0$ such that:
+In particular, there does not exist $L>0$ such that:
 $$\forall Q_1,Q_2\in(\Real^2)^{\ocS\ocA}, \|\cT Q^1 - \cT Q^2\|_\infty \leq L \|Q^1 - Q^2\|_\infty$$
 In other words, $\cT$ is not a contraction for $\|\cdot\|_\infty$.
 \end{proof}
@@ -675,7 +678,8 @@ To reproduce the result displayed in \Cref{sec:experiements}, first install the 
     \centering
     
 
-\begin{minted}{sh}
+%\begin{minted}{sh}
+\begin{lstlisting}[language=bash,caption={bash version}]
 # Install highway-env
 pip3 install --user git+https://github.com/eleurent/rl-agents
 # Change python path to the path of this repository
@@ -687,7 +691,9 @@ cd code/scaling-up-brl/budgeted-rl/
 python3 main/egreedy/main-egreedy.py config/slot-filling.json 0 6
 python3 main/egreedy/main-egreedy.py config/corridors.json 0 4
 python3 main/egreedy/main-egreedy.py config/highway-easy.json 0 10
-\end{minted}
+\end{lstlisting}
+%\end{minted}
+
 \caption{Instructions to reproduce experiments}
     \label{fig:instructions}
 \end{figure}
