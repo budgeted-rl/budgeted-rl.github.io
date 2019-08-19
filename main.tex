@@ -159,13 +159,11 @@ Our first contribution is to re-frame the original BMDP formulation in the conte
  We work in the space of budgeted policies, where $\pi$ both depends on $\beta$ and also outputs a next budget $\beta_a$. Hence, the budget $\beta$ is neither fixed nor constant as in the CMDP setting but instead evolves as part of the dynamics.
 
 We cast the BMDP problem as a multi-objective MDP problem \citep{Roijers2013ASO} by considering \emph{augmented} state and action spaces $\ocS = \cS\times \cB$ and $\ocA= \cA\times \cB$, and equip them with the augmented dynamics $\ov{P}\in \cM(\ocS)^{\ocS \times \ocA}$ defined as:
-\begin{equation}
-    \label{eq:dynamics}
-    \ov{P}\left(\os' \condbar \os, \oa\right) = \ov{P}\left((s',\beta') \condbar (s,\beta), (a, \beta_a)\right) \eqdef P(s'|s, a)\delta(\beta' - \beta_a),
-\end{equation}
+    \begin{equation}
+        \label{eq:dynamics}
+        \ov{P}\left(\os' \condbar \os, \oa\right) = \ov{P}\left((s',\beta') \condbar (s,\beta), (a, \beta_a)\right) \eqdef P(s'|s, a)\delta(\beta' - \beta_a),
+    \end{equation}
 where $\delta$ is the Dirac indicator distribution.
-% TU: on a rappelé ce que c'est qu'un MDP, on pourrait peut-être rappeler ce qu'est un Dirac ?
-% TU: si je comprend bien \beta_a = \beta' c'est le budget restant et ça n'es tplus le delta de budget. La relation avec \beta reste très "implicite".
 
 In other words, in these augmented dynamics, the output budget $\beta_a$ returned at time $t$ by a budgeted policy $\pi\in \Pi=\cM(\ocA)^{\ocS}$ will be used to condition the policy at the next timestep $t+1$.
 
@@ -288,7 +286,7 @@ When the BMDP is unknown, we need to adapt \Cref{algo:bvi} to work with a batch 
 \begin{equation*}
     \hat{\cT} Q(\os_i, \oa_i, r_i, \os'_i) \eqdef r_i + \gamma \sum_{\ov{a'_i}\in \cA_i} \pi_\text{greedy}(\ov{a'_i}|\ov{s'_i}; Q) Q(\ov{s'_i}, \ov{a'_i}).
 \end{equation*}
-We introduce in \Cref{algo:bftq} the \emph{Budgeted-Fitted-Q} (\BFTQ) algorithm, an extension of the \emph{Fitted-Q} (\FTQ) algorithm \citep{Ernst2005,Riedmiller2005} adapted to solve unknown BMDPs. Because we work with  continuous state space $\cS$ and budget space $\cB$, we need to employ function-approximation in order to generalise to nearby states and budgets. Precisely, given a parametrized model $Q_\theta$, we seek to minimise a regression loss $\cL(Q_\theta, Q_\text{target};\cD) = \sum_{\cD} ||Q_\theta(\os, \oa) - Q_\text{target}(\os, \oa, r, \os')||_2^2$.
+We introduce in \Cref{algo:bftq} the \emph{Budgeted-Fitted-Q} (\BFTQ) algorithm, an extension of the \emph{Fitted-Q} (\FTQ) algorithm \citep{Ernst2005,Riedmiller2005} adapted to solve unknown BMDPs. Because we work with continuous state space $\cS$ and budget space $\cB$, we need to employ function-approximation in order to generalise to nearby states and budgets. Precisely, given a parametrized model $Q_\theta$, we seek to minimise a regression loss $\cL(Q_\theta, Q_\text{target};\cD) = \sum_{\cD} ||Q_\theta(\os, \oa) - Q_\text{target}(\os, \oa, r, \os')||_2^2$.
 Any model can be used, such as linear models, regression trees, or neural networks.
 
 \begin{minipage}[t]{0.47\textwidth}
@@ -410,7 +408,7 @@ This simple environment is only meant to highlight clearly the specificity of ex
 Our second application is a dialogue-based slot-filling simulation that has already benefited from batch RL optimisation in the past~\citep{Li2009ReinforcementLF,chandramohan2010optimizing,pietquin2011sample}. The system fills in a form of slot-values by interacting a user through speech, before sending them a response. For example, in a restaurant reservation domain, it may ask for three slots: the area of the restaurant, the price-range and the food type. The user could respectively provide those three slot-values : \texttt{Cambridge}, \texttt{Cheap} and \texttt{Indian-food}. In this application, we do not focus on how to extract such information from the user utterances, we rather focus on decision-making for filling in the form. To that end, the system can choose among a set of generic actions. As in \citep{carrara2018safe}, there are two ways of asking for a slot value: a slot value can be either be provided with an utterance, which may cause speech recognition errors with some probability, or by requiring the user to fill-in the slots by using a numeric pad. In this case, there are no recognition errors but a counterpart risk of hang-up: we assume that manually filling a key-value form is time-consuming and annoying. The environment yields a reward if all slots are filled without errors, and a constraint if the user hang-ups. Thus, there is a clear trade-off between using utterances and potentially committing a mistake, or using the numeric pad and risking a premature hang-up.
 
 \paragraph{Autonomous driving}
-In our third application, we use the \href{https://github.com/eleurent/highway-env}{highway-env} environment \citep{Leurent2018} for simulated highway driving and behavioural decision-making.
+In our third application, we use the \href{https://github.com/eleurent/highway-env}{highway-env} environment \citep{highway-env} for simulated highway driving and behavioural decision-making.
 We define a task that displays a clear trade-off between safety and efficiency. The agent controls a vehicle with a finite set of manoeuvres implemented by low-lever controllers: $\mathcal{A}$ = \{\text{no-op}, \text{right-lane}, \text{left-lane}, \text{faster}, \text{slower}\}. It is driving on a two-lane road populated with other traffic participants: the vehicles in front of the agent drive slowly, and there are incoming vehicles on the opposite lane. Their behaviours are randomised, which introduces some uncertainty with respect to their possible future trajectories.
 The task consists in driving as fast as possible, which is modelled by a reward proportional to the velocity: $R_r(s_t, a_t) \propto v_t$. This motivates the agent to try and overtake its preceding vehicles by driving fast on the opposite lane. This optimal but overly aggressive behaviour can be tempered through a cost function that embodies a safety objective: $R_c(s_t, a_t)$ is set to $1/H$ whenever the ego-vehicle is driving on the opposite lane, where $H$ is the episode horizon. Thus, the constrained signal $G_c^\pi$ is the maximum proportion of time that the agent is allowed to drive on the wrong side of the road.
 

@@ -50,10 +50,10 @@ Let $\os, \oa \in \ocA\times\ocS$. For this proof, we consider  potentially non-
 
 \begin{align}
     Q_r^*(\os, \oa) &=  \max_{\rho, \pi'} Q_r^{\rho, \pi'}(\os', \oa') \label{eq:pthm_def}\\
-    &= \max_{\rho, \pi'} R_r(\os, \oa) + \gamma \sum_{\os'\in\cS} P(\os' | \os, \oa) V_r^{\rho, \pi'}(\os') \label{eq:pthm_exp}\\
-    &= R_r(\os, \oa) + \gamma \sum_{\os'\in\cS}  P(\os' | \os, \oa) \max_{\rho, \pi'} \sum_{\oa'\in\ocA} \rho(\oa' | \os')Q_r^{\pi'}(\os', \oa') \label{eq:pthm_marg}\\
-    &= R_r(\os, \oa) + \gamma \sum_{\os'\in\cS}  P(\os' | \os, \oa) \max_\rho\sum_{\oa'\in\ocA}\rho(\oa' | \os')\max_{\pi'\in\Pi_a(\os')}Q_r^{\pi'}(\os', \oa') \label{eq:pthm_max}\\
-    &= R_r(\os, \oa) + \gamma \sum_{\os'\in\cS}  P(\os' | \os, \oa) \max_\rho\expectedvalueover{\oa'\sim\rho}Q_r^*(\os', \oa') \label{eq:pthm_marg_def2}
+    &= \max_{\rho, \pi'} R_r(s, a) + \gamma \sum_{\os'\in\cS} P(\os' | \os, \oa) V_r^{\rho, \pi'}(\os') \label{eq:pthm_exp}\\
+    &= R_r(s, a) + \gamma \sum_{\os'\in\cS}  P(\os' | \os, \oa) \max_{\rho, \pi'} \sum_{\oa'\in\ocA} \rho(\oa' | \os')Q_r^{\pi'}(\os', \oa') \label{eq:pthm_marg}\\
+    &= R_r(s, a) + \gamma \sum_{\os'\in\cS}  P(\os' | \os, \oa) \max_\rho\sum_{\oa'\in\ocA}\rho(\oa' | \os')\max_{\pi'\in\Pi_a(\os')}Q_r^{\pi'}(\os', \oa') \label{eq:pthm_max}\\
+    &= R_r(s, a) + \gamma \sum_{\os'\in\cS}  P(\os' | \os, \oa) \max_\rho\expectedvalueover{\oa'\sim\rho}Q_r^*(\os', \oa') \label{eq:pthm_marg_def2}
 \end{align}
 where $\pi = (\rho, \pi')\in\Pi_a(\os)$ and $\pi'\in\Pi_a(\os')$.
 
@@ -431,7 +431,7 @@ It remains to show that $q^1$ and $q^2$ are two successive points in $\cF_Q$: $\
 
 \section{Risk-Sensitive Exploration}
 \label{sec:risk-sensitive-supp}
-We recall the Risk-Sensitive Exploration algorithm in \Cref{algo:risk-sensitive-exploration}
+We recall the Risk-Sensitive Exploration in \Cref{algo:risk-sensitive-exploration}:
 
 
 \input{source/risk-sensitive-explo-pseudo-code.tex}
