@@ -183,18 +183,23 @@ These three steps will allow us to control $Q_r^{2*} - Q_r^{1*}$ as a function o
     \cF^2\in\cB(\cF^1, R) &\iff d(\cF^1, \cF^2) \leq R \iff \max_{q^2\in\cF^2}\min_{q^1\in\cF^1}\|q^2-q^1\|_\infty \leq R
     \label{eq:ball-set}
 \end{align}
-Assume $Q^2\in\cB(Q^1,R)$.
-We start by showing this result for $\cC^2(Q^{1-})$ and $\cC^2(Q^{2-})$ as defined in \Cref{sec:proof_pi_hull}:
+Assume $Q^2\in\cB(Q^1,R)$, we show by contradiction that $\cF^2 \in B(\cF^1, R)$. Indeed, assume there exists $q^1\in \cF^1$ such that $\cF^2 \cap B(q^1, R) = \emptyset$. Denote $q^2$ the unique point of $\cF^2$ such that $q^2_c = q^1_c$. By construction of $q^1$, we know that $\|q^1-q^2\|_\infty > R$. There are two possible cases:
+\begin{itemize}
+    \item $q^2_r > q^1_r$: this also directly implies that $q^2_r > q^1_r + R$. But $q^2\in\cF^2$, so there exist $q^2_1, q^2_2\in Q^{2},\lambda\in\Real$ such that $q^2 = (1-\lambda)q^2_1 + \lambda q^2_2$. But since $Q^2\in B(Q^1, R)$, there also exist $q_1^1, q^1_2\in Q^1$ such that $\|q^1_1-q^2_1\|_\infty \leq R$ and $\|q^1_2-q^2_2\|_\infty \leq R$, and in particular $q^1_{1r}\geq q^2_{1r}-R$ and $q^1_{2r}\geq q^2_{2r}-R$. But then, the point $q^{1'}=(1-\mu)q^1_1 + \mu q^1_2$ with $\mu=(q^2_c-q^1_{1c})/(q^2_{2c}-q^1_{1c})$ verifies $q^{1'}_c = q^1_c$ and $q^{1'}_r \geq q^2_r - R > q^1_r$ which contradicts the definition of $q_1\in\cF^1$ as defined in \eqref{eq:top-frontier}.
+    \item $q^2_r < q^1_r$: then the same reasoning can be applied by simply swapping the indexes 1 and 2.
+\end{itemize}
 
-Let $\os\in\ocS$ and $q^2\in\cC^2(Q^{2-})$, $\exists\lambda\in[0,1], \oa_1,\oa_2\in\ocA: q^2 = (1-\lambda)Q^2(\os,\oa_1) + \lambda Q^2(\os,\oa_2)$. Define $q^1 = (1-\lambda)Q^1(\os,\oa_1) + \lambda Q^1(\os,\oa_2)$. Then 
-\begin{align*}
-    \|q^2-q^1\|_\infty &= \|(1-\lambda)(Q^2(\os,\oa_1) - Q^1(\os,\oa_1)) + \lambda (Q^2(\os,\oa_2) - Q^1(\os,\oa_2))\|_\infty\\
-    &\leq  (1-\lambda)\|Q^2(\os,\oa_1) - Q^1(\os,\oa_1)\|_\infty + \lambda \|Q^2(\os,\oa_2) - Q^1(\os,\oa_2)\|_\infty\\
-    &\leq (1-\lambda)R+\lambda R = R
-\end{align*}
+% We start by showing this result for $\cC^2(Q^{1-})$ and $\cC^2(Q^{2-})$ as defined in \Cref{sec:proof_pi_hull}:
+% Let $\os\in\ocS$ and $q^2\in\cC^2(Q^{2-})$, $\exists\lambda\in[0,1], \oa_1,\oa_2\in\ocA: q^2 = (1-\lambda)Q^2(\os,\oa_1) + \lambda Q^2(\os,\oa_2)$. Define $q^1 = (1-\lambda)Q^1(\os,\oa_1) + \lambda Q^1(\os,\oa_2)$. Then 
+% \begin{align*}
+%     \|q^2-q^1\|_\infty &= \|(1-\lambda)(Q^2(\os,\oa_1) - Q^1(\os,\oa_1)) + \lambda (Q^2(\os,\oa_2) - Q^1(\os,\oa_2))\|_\infty\\
+%     &\leq  (1-\lambda)\|Q^2(\os,\oa_1) - Q^1(\os,\oa_1)\|_\infty + \lambda \|Q^2(\os,\oa_2) - Q^1(\os,\oa_2)\|_\infty\\
+%     &\leq (1-\lambda)R+\lambda R = R
+% \end{align*}
 
-It remains to show that when taking the top frontiers of the convex sets $\cC^2(Q^{1-})$ and $\cC^2(Q^{2-})$, they remain at a distance of at most $R$.
+% It remains to show that when taking the top frontiers of the convex sets $\cC^2(Q^{1-})$ and $\cC^2(Q^{2-})$, they remain at a distance of at most $R$.
 
+We have shown that $\cF^2 \in B(\cF^1, R)$.
 This is illustrated in \Cref{fig:contraction_lips_hull}: given a function $Q^1$, we show the locus $\cB(Q_1,R)$ of $Q^2$. We then draw $\cF^1$ the top frontier of the convex hull of $Q^1$ and alongside the locus of all possible $\cF^2$, which belong to a ball $\cB(\cF^1, R)$. 
 
 \begin{figure}[ht]
@@ -249,7 +254,7 @@ Hence,
 and $Q_c^{1*} = Q_c^{2*} = \beta$.
 Consequently, $ \|Q^{2*} - Q^{1*}\|_\infty \leq (L+1)R$
 
-For completeness, the edge case in \Cref{sec:proof_pi_hull} should be considered as well.
+Finally, consider the edge case in \Cref{sec:proof_pi_hull}: the constraint is not active, and the optimal value is simply $\argmax_{q\in\cF} q^r$. In particular, since we showed that $\cF^2\in B(\cF^1, R)$, and since $Q^{2*}\in \cF^2$, there exist $q^1\in \cF^1: \|Q^{2*}-q^1\|_\infty\leq R$ and in particular $Q^{1*}_r \geq q^1_r \geq Q^{2*}_r - R$. Reciprocally, by the same reasoning, $Q^{2*}_r \geq Q^{1*}_r - R$. Hence, we have that $| Q_r^{2*} - Q_r^{1*}| \leq R \leq R(L+1).$
 
 \textbf{Wrapping it up:}
 
@@ -363,9 +368,10 @@ We further restrict the search space of $q^*$ following two observations:
         \item $q^1,q^2\in Q^-$ is the only remaining possibility.
     \end{enumerate}
     \item $q^*$ belongs to the \emph{top frontier} $\cF$:
-    \begin{equation*}
+    \begin{equation}
+    \label{eq:top-frontier}
         \cF_Q = \{q\in \cC^2(Q^-): \not\exists q'\in \cC^2(Q^-): q_c=q_c'\text{ and }q_r<q_r'\}
-    \end{equation*}
+    \end{equation}
     Trivially, otherwise q' would be a better candidate than $q^*$.
 \end{enumerate}
 
