@@ -51,15 +51,29 @@ We display the evolution in the budgeted policy behavior with respect to the bud
 
 # How to reproduce
 
-Install pycairo, numpy, scipy, highway-env and pytorch.
+### Method 1
 
-Run main script using any config file. Choose the range of seeds you want to test on:
+Install requirements:
+* The environment: [highway-env](https://github.com/eleurent/highway-env)
+* The agents: [rl-agents](https://github.com/eleurent/rl-agents)
 
-`python main/egreedy/main-egreedy.py config/slot-filling.json 0 6`
+Run the training:
+```shell
+cd <path-to-rl-agents>/scripts/
+python experiments.py evaluate scripts/configs/TwoWayEnv/env.json \
+                               scripts/configs/TwoWayEnv/agents/BFTQAgent/baseline.json \
+                               --train --episodes=1000
+```
 
-`python main/egreedy/main-egreedy.py config/corridors.json 0 4`
+### Method 2
 
-`python main/egreedy/main-egreedy.py config/highway-easy.json 0 10`
+* Clone [@ncarrara's phd code](https://github.com/ncarrara/phd_code)
+* Run main script using any config file. Choose the range of seeds you want to test on:
+```shell
+python main/egreedy/main-egreedy.py config/slot-filling.json 0 6
+python main/egreedy/main-egreedy.py config/corridors.json 0 4
+python main/egreedy/main-egreedy.py config/highway-easy.json 0 10
+```
 
 ## Environment parameters
 
