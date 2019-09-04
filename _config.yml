@@ -3,4 +3,5 @@ title: Budgeted Reinforcement Learning in Continuous State Space
 description: Nicolas Carrara*, Edouard Leurent*, Romain Laroche, Tanguy Urvoy, Odalric-Ambrym Maillard, Olivier Pietquin
 
 github:
-  is_project_page: true
+  repository_url: http://github.com/eleurent/rl-agents
+  paper_url: https://arxiv.org/abs/1903.01004
