@@ -1,6 +1,6 @@
 theme: jekyll-theme-cayman
 title: Budgeted Reinforcement Learning in Continuous State Space
-description: Learning to take risks and act with caution
+description: Nicolas Carrara*, Edouard Leurent*, Romain Laroche, Tanguy Urvoy, Odalric-Ambrym Maillard, Olivier Pietquin
 
 github:
   is_project_page: true
