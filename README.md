@@ -53,7 +53,7 @@ We display the evolution in the budgeted policy behavior with respect to the bud
 
 # How to reproduce
 
-First install the following conventional libraries for python3: pycairo, numpy, scipy and pytorch. Install the highway-env environment [highway-env](https://github.com/eleurent/highway-env). Then, use one of these methods:
+First install the following conventional libraries for python3: pycairo, numpy, scipy and pytorch. Install the [highway-env](https://github.com/eleurent/highway-env) environment. Then, use one of these methods:
 
 ### Method 1 (well commented and understandable, but only for highway-env)
 
