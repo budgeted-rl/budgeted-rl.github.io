@@ -2,7 +2,7 @@
 \DontPrintSemicolon
 \KwData{An environment, a BFTQ solver, $W$ CPU workers}
 \KwResult{A batch of transitions $\cD$}
-$\cD\leftarrow\{\}$\;
+$\cD\leftarrow\emptyset$\;
 \For{each intermediate batch} {
 split episodes between $W$ workers\;
 \For(\tcp*[f]{run this loop on each worker in parallel}){each episode in batch}{

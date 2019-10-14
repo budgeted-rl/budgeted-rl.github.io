@@ -5,7 +5,7 @@
 
 \paragraph{Outline}
 
-This paper gathers all the supplementary material and goes as follows: \Cref{sec:proofs} details all the proofs of the main results. \Cref{sec:risk-sensitive-supp} and \Cref{sec:bftq-full} recall respectively the scalable \BFTQ algorithm and the risk-sensitive exploration procedure. \Cref{sec:lagragian} describes a naive alternative to \BFTQ based on Lagrangian Relaxation. The \Cref{sec:exp-supp} assembles all the assets for visualising and reproducing the experiments, including visualisations of policy executions, algorithms and environment parameters, and instructions for executing the attached source code. Finally we fill the Machine Learning Reproducibility Checklist and we justify each statement in \Cref{sec:ml-checklist}.
+This paper gathers all the supplementary material and goes as follows: \Cref{sec:proofs} details all the proofs of the main results. \Cref{sec:bftq-full} recalls the full scalable \BFTQ algorithm. \Cref{sec:lagragian} describes a naive alternative to \BFTQ based on Lagrangian Relaxation. The \Cref{sec:exp-supp} assembles all the assets for visualising and reproducing the experiments, including visualisations of policy executions, algorithms and environment parameters, and instructions for executing the attached source code. Finally we fill the Machine Learning Reproducibility Checklist and we justify each statement in \Cref{sec:ml-checklist}. Please note that all the materials referenced through web links are also available in the zip file of supplementary materials.
 
 
 
@@ -16,7 +16,7 @@ This paper gathers all the supplementary material and goes as follows: \Cref{sec
 \subsection{\Cref{prop:bellman-expectation}}
 
 \begin{proof}
-This proof is the same as that in classical multi-objective MDPs.
+Thanks to the introduction of the augmented spaces $\ocS, \ocA$ and dynamics $\ov{P}$, this proof is the same as that in classical multi-objective MDPs.
 
 \begin{align*}
     V^\pi(\os) &\eqdef \expectedvalue\left[ G^\pi \condbar \ov{s_0} = \os\right] \\
@@ -50,10 +50,10 @@ Let $\os, \oa \in \ocA\times\ocS$. For this proof, we consider  potentially non-
 
 \begin{align}
     Q_r^*(\os, \oa) &=  \max_{\rho, \pi'} Q_r^{\rho, \pi'}(\os', \oa') \label{eq:pthm_def}\\
-    &= \max_{\rho, \pi'} R_r(s, a) + \gamma \sum_{\os'\in\cS} P(\os' | \os, \oa) V_r^{\rho, \pi'}(\os') \label{eq:pthm_exp}\\
-    &= R_r(s, a) + \gamma \sum_{\os'\in\cS}  P(\os' | \os, \oa) \max_{\rho, \pi'} \sum_{\oa'\in\ocA} \rho(\oa' | \os')Q_r^{\pi'}(\os', \oa') \label{eq:pthm_marg}\\
-    &= R_r(s, a) + \gamma \sum_{\os'\in\cS}  P(\os' | \os, \oa) \max_\rho\sum_{\oa'\in\ocA}\rho(\oa' | \os')\max_{\pi'\in\Pi_a(\os')}Q_r^{\pi'}(\os', \oa') \label{eq:pthm_max}\\
-    &= R_r(s, a) + \gamma \sum_{\os'\in\cS}  P(\os' | \os, \oa) \max_\rho\expectedvalueover{\oa'\sim\rho}Q_r^*(\os', \oa') \label{eq:pthm_marg_def2}
+    &= \max_{\rho, \pi'} R_r(s, a) + \gamma \sum_{\os'\in\ocS} P(\os' | \os, \oa) V_r^{\rho, \pi'}(\os') \label{eq:pthm_exp}\\
+    &= R_r(s, a) + \gamma \sum_{\os'\in\ocS}  P(\os' | \os, \oa) \max_{\rho, \pi'} \sum_{\oa'\in\ocA} \rho(\oa' | \os')Q_r^{\pi'}(\os', \oa') \label{eq:pthm_marg}\\
+    &= R_r(s, a) + \gamma \sum_{\os'\in\ocS}  P(\os' | \os, \oa) \max_\rho\sum_{\oa'\in\ocA}\rho(\oa' | \os')\max_{\pi'\in\Pi_a(\os')}Q_r^{\pi'}(\os', \oa') \label{eq:pthm_max}\\
+    &= R_r(s, a) + \gamma \sum_{\os'\in\ocS}  P(\os' | \os, \oa) \max_\rho\expectedvalueover{\oa'\sim\rho}Q_r^*(\os', \oa') \label{eq:pthm_marg_def2}
 \end{align}
 where $\pi = (\rho, \pi')\in\Pi_a(\os)$ and $\pi'\in\Pi_a(\os')$.
 
@@ -63,7 +63,7 @@ This follows from:
 \item[\eqref{eq:pthm_exp}.] Bellman Expectation expansion from \Cref{prop:bellman-expectation}.
 \item[\eqref{eq:pthm_marg}.] Marginalisation on $\oa'$.
 \item[\eqref{eq:pthm_max}.] \begin{itemize}
-    \item Trivially $\max_{\pi'\in\Pi_a(\os')} \sum_{\oa'\in\cA} \cdot \leq \sum_{\oa'\in\cA} \max_{ \pi'\in\Pi_a(\os)} \cdot$
+    \item Trivially $\max_{\pi'\in\Pi_a(\os')} \sum_{\oa'\in\ocA} \cdot \leq \sum_{\oa'\in\ocA} \max_{ \pi'\in\Pi_a(\os)} \cdot$
     \item Let $\ov{\pi}\in\argmax_{\pi'\in\Pi_a(\os')} Q_r^{\pi'}(\os', \oa')$, then:
     \begin{align*}
         \sum_{\oa'\in\ov{A}}\rho(\oa'|\os')\max_{\pi'\in\Pi_a(\os')}Q_r^{\pi'}(\os', \oa') &= \sum_{\oa'\in\ov{A}}\rho(\oa'|\os')Q_r^{\ov{\pi}}(\os', \oa') \\
@@ -150,6 +150,11 @@ In other words, $\cT$ is not a contraction for $\|\cdot\|_\infty$.
 
 \subsection{\Cref{rmk:contractivity-smooth}}
 \label{proof:contraction-with-smooth}
+
+\begin{remark*}
+This proof makes use of insights detailed in the proof of \Cref{prop:bftq_pi_hull} (\Cref{sec:proof_pi_hull}), which we recommend the reader to consult first.
+\end{remark*}
+
 \begin{proof}
 We now study the contractivity of $\cT$ when restricted to the functions of $\cL_\gamma$ defined as follows:
 \begin{equation}
@@ -162,7 +167,7 @@ That is, for all state $\os$, the set $Q(\os, \ocA)$ plot in the $(Q_c,Q_r)$ pla
 
 We impose such structure for the following reason: the counter-example presented above prevented contraction because it was a pathological case in which the slope of $Q$ can be arbitrary large. As a consequence, when solving $Q_r^*$ such that $Q_c^*=\beta$, a vertical slice of a $\|\cdot\|_\infty$ ball around $Q_1$ (which must contain $Q_2$) can be arbitrary large as well.
 
-This sketch of proof makes use of insights detailed in the proof of \Cref{prop:bftq_pi_hull}, which we recommend the reader to consult first.
+This proof makes use of insights detailed in the proof of \Cref{prop:bftq_pi_hull}, which we recommend the reader to consult first.
 
 We denote $\cB(Q,R)$ the ball of centre $Q$ and radius $R$ for the $\|\cdot\|_\infty$-norm:
 \begin{equation*}
@@ -435,12 +440,10 @@ It remains to show that $q^1$ and $q^2$ are two successive points in $\cF_Q$: $\
 %     Because $\sum_i\hat{x}_i\leq \sum_i\hat{c}_i \leq c$, the tuple $(\hat{x}_1, \ldots \hat{x}_n)$ is also a feasible value for $(a)$. And, by definition of the maximum on a set: $(a) = \max\limits_{\sum_i x_i \leq c} \sum_j f_j(x_j) \geq \sum_j f_j(\hat{x}_j) = (b)$.
 % \end{proof}
 
-\section{Risk-Sensitive Exploration}
-\label{sec:risk-sensitive-supp}
-We recall the Risk-Sensitive Exploration in \Cref{algo:risk-sensitive-exploration}:
-
-
-\input{source/risk-sensitive-explo-pseudo-code.tex}
+%\section{Risk-Sensitive Exploration}
+%\label{sec:risk-sensitive-supp}
+%We recall the Risk-Sensitive Exploration in %\Cref{algo:risk-sensitive-exploration}:
+%\input{source/risk-sensitive-explo-pseudo-code.tex}
 
 \section{Scalable Implementation of BFTQ}
 \label{sec:bftq-full}
@@ -480,7 +483,7 @@ Fitted-Q (FTQ)~\citep{Ernst2005,Riedmiller2005} can be easily adapted for contin
 
 \subsection{Examples of different exploration strategies}
 \label{subsec:exploration-examples}
-We compare two approaches for constructing a batch of samples. The animations from the html page \url{exploration.html} display the trajectories collected in each intermediate sub-batch. The first row corresponds to a classical  risk neutral epsilon-greedy exploration policy while the second row showcases a risk-sensitive exploration strategy introduced in the paper. Each animation corresponds to a different seed.
+We compare two approaches for constructing a batch of samples. The animations  \href{https://github.com/budgeted-rl/budgeted-rl.github.io\#risk-sensitive-exploration}{from this html page} display the trajectories collected in each intermediate sub-batch. The first row corresponds to a classical  risk neutral epsilon-greedy exploration policy while the second row showcases a risk-sensitive exploration strategy introduced in the paper. Each animation corresponds to a different seed.
 
 \subsection{Examples of BFTQ policies executions}
 \label{sec:bftq-executions}
@@ -489,7 +492,7 @@ We display the evolution in the budgeted policy behaviour with respect to the bu
 
 \paragraph{Highway-Env}
 
-On the \texttt{highway-env} , the budgeted agents display a wide variety of behaviours. Animations are displayed on the html page \url{highway-env.html}. When $\beta = 1$, the ego-vehicle drives in a very aggressive style: it immediately switches to the opposite lane and drives as fast as possible to pass slower vehicles, swiftly changing lanes to avoid incoming traffic. On the contrary when $\beta = 0$, the ego-vehicle is conservative: it stays on its lane and drives at a low velocity. With intermediate budgets such as $\beta = 0.2$, the agent sometimes decides to overtake its front vehicle but promptly steers back to its original lane afterwards.
+On the \texttt{highway-env} , the budgeted agents display a wide variety of behaviours. Animations are displayed \href{https://github.com/budgeted-rl/budgeted-rl.github.io#driving-styles}{on this html page}. When $\beta = 1$, the ego-vehicle drives in a very aggressive style: it immediately switches to the opposite lane and drives as fast as possible to pass slower vehicles, swiftly changing lanes to avoid incoming traffic. On the contrary when $\beta = 0$, the ego-vehicle is conservative: it stays on its lane and drives at a low velocity. With intermediate budgets such as $\beta = 0.2$, the agent sometimes decides to overtake its front vehicle but promptly steers back to its original lane afterwards.
 
 \paragraph{Slot-filling}
 
@@ -501,12 +504,12 @@ In \Cref{table:dialogues}, we display two dialogues done with the same BFTQ poli
 
 \paragraph{Corridors}
 
-Animations are displayed on the html page \url{corridors.html} for the \texttt{corridors} environment. When the budget is low, the agent takes the safest path on the left. When the budget increases, it gradually switches to the other lane, earning higher rewards but also costs. This gradual process could not be achieved with a deterministic policy as it would chose either one path or the other. Each animation corresponds to a different seed.
+Animations are displayed  \href{https://github.com/budgeted-rl/budgeted-rl.github.io\#optimal-budgeted-policies-learnt-with-a-risk-sensitive-exploration}{on this html page} for the \texttt{corridors} environment. When the budget is low, the agent takes the safest path on the left. When the budget increases, it gradually switches to the other lane, earning higher rewards but also costs. This gradual process could not be achieved with a deterministic policy as it would chose either one path or the other. Each animation corresponds to a different seed.
 
 \subsection{Reproducibility}
 \label{subsec:reproducibility-supp}
 
-The following section displays environments and algorithms parameters and instructions to reproduce the exact same results displayed in \Cref{sec:experiements}.
+The following section displays environments and algorithms parameters and instructions to reproduce the exact same results displayed in \Cref{sec:experiments}.
 
 \subsubsection{Environments Parameters}
 \label{sec:env-parameters}
@@ -678,7 +681,7 @@ We performed a shallow grid-search for the classic Neural-Network parameters. Mo
 
 \subsubsection{Instructions for reproducibility}
 \label{subsubsec:instruction-reproducibility}
-To reproduce the result displayed in \Cref{sec:experiements}, first install the following conventional libraries for python3: pycairo, numpy, scipy and pytorch. Then, execute the commands in \Cref{fig:instructions} on a Linux Operating System. The Graphic Processing Unit used for experiments is an NVIDIA \texttt{GeForce GTX 1080 Ti} and the Computational Processing Unit is an Intel \texttt{Xeon E7}.
+To reproduce the result displayed in \Cref{sec:experiments}, first install the following conventional libraries for python3: pycairo, numpy, scipy and pytorch. Then, execute the commands in \Cref{fig:instructions} on a Linux Operating System. The Graphic Processing Unit used for experiments is an NVIDIA \texttt{GeForce GTX 1080 Ti} and the Computational Processing Unit is an Intel \texttt{Xeon E7}. Then, follow the instructions in \Cref{fig:instructions}. For more details, check this \href{https://github.com/budgeted-rl/budgeted-rl.github.io\#how-to-reproduce}{web address}.
 
 \begin{figure}
     \centering
@@ -688,10 +691,12 @@ To reproduce the result displayed in \Cref{sec:experiements}, first install the 
 \begin{lstlisting}[language=bash,caption={bash version}]
 # Install highway-env
 pip3 install --user git+https://github.com/eleurent/rl-agents
+# clone the phd_code repository
+git clone https://github.com/ncarrara/phd_code
 # Change python path to the path of this repository
-export PYTHONPATH="code/scaling-up-brl"
+export PYTHONPATH="phd_code/ncarrara"
 # Navigate to budgeted-rl folder
-cd code/scaling-up-brl/budgeted-rl/
+cd phd_code/ncarrara/budgeted-rl/
 # Run main script using any config file
 # Choose the range of seeds you want to test on
 python3 main/egreedy/main-egreedy.py config/slot-filling.json 0 6
@@ -713,7 +718,7 @@ For all models and algorithms presented, indicate if you include:
     \item  A clear description of the mathematical setting, algorithm, and/or model:
     
     \begin{itemize}\item \textbf{yes}, see \Cref{sec:intro}, \Cref{sec:bdp}, \Cref{sec:brl},
-    \Cref{sec:risk-sensitive-supp} and \Cref{sec:bftq-full}.
+    \Cref{sec:exploration} and \Cref{sec:bftq-full}.
     \end{itemize}
     \item An analysis of the complexity (time, space, sample size) of any algorithm:
     \begin{itemize}\item \textbf{yes}, see \Cref{subsec:parallel-computing}.
@@ -744,7 +749,7 @@ For all figures and tables that present empirical results, indicate if you inclu
     \item A complete description of the data collection process, including sample size: 
     
         \begin{itemize}
-            \item\textbf{yes}, see \Cref{sec:experiements} and \Cref{sec:algorithms-parameters}.
+            \item\textbf{yes}, see \Cref{sec:experiments} and \Cref{sec:algorithms-parameters}.
         \end{itemize}
     \item A link to a downloadable version of the dataset or simulation environment:
     
