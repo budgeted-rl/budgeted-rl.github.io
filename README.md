@@ -55,7 +55,7 @@ We display the evolution in the budgeted policy behavior with respect to the bud
 
 First install the following conventional libraries for python3: pycairo, numpy, scipy and pytorch. Install the [highway-env](https://github.com/eleurent/highway-env) environment. Then, use one of these methods:
 
-### Method 1 (well commented and understandable, but only for highway-env)
+### Method 1 (for highway-env: repository eleurent)
 
 Install requirements:
 * The agents: [rl-agents](https://github.com/eleurent/rl-agents)
@@ -68,7 +68,7 @@ python experiments.py evaluate scripts/configs/TwoWayEnv/env.json \
                                --train --episodes=1000
 ```
 
-### Method 2 (slot-filling, highway-env, corridors)
+### Method 2 (for slot-filling, highway-env,and corridors: repository ncarrara)
 
 * Clone [@ncarrara's phd code](https://github.com/ncarrara/phd_code)
 * Run main script using any config file. Choose the range of seeds you want to test on:
