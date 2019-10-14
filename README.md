@@ -44,6 +44,8 @@ We compare two approaches for contructing a batch of samples. The animations dis
 ### Risk-sensitive strategy
 <img src="https://raw.github.com/eleurent/budgeted-rl/master/assets/explo-risk-sensitive-1.gif" width="150" height="100" /> <img src="https://raw.github.com/eleurent/budgeted-rl/master/assets/explo-risk-sensitive-2.gif" width="150" height="100" /> <img src="https://raw.github.com/eleurent/budgeted-rl/master/assets/explo-risk-sensitive-3.gif" width="150" height="100" /> <img src="https://raw.github.com/eleurent/budgeted-rl/master/assets/explo-risk-sensitive-4.gif" width="150" height="100" />
 
+### Optimal Budgeted Policies learnt with a risk-sensitive exploration
+
 We display the evolution in the budgeted policy behavior with respect to the budget. The policies have been learnt with a risk-sensitive exploration. When the budget is low, the agent takes the safest path on the left. When the budget increases, it gradually switches to the other lane, earning higher rewards but also costs. This gradual process could not be achieved with a deterministic policy as it would chose either one path or the other. Each animation corresponds to a different seed.
 
 <img src="https://raw.github.com/eleurent/budgeted-rl/master/assets/exec-risk-sensitive-1.gif" width="150" height="100" /> <img src="https://raw.github.com/eleurent/budgeted-rl/master/assets/exec-risk-sensitive-2.gif" width="150" height="100" /> <img src="https://raw.github.com/eleurent/budgeted-rl/master/assets/exec-risk-sensitive-3.gif" width="150" height="100" /> <img src="https://raw.github.com/eleurent/budgeted-rl/master/assets/exec-risk-sensitive-4.gif" width="150" height="100" />
