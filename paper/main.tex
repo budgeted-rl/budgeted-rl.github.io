@@ -128,7 +128,7 @@ SequeL team, INRIA Lille -- Nord Europe\footnotemark[2]\\
 \maketitle
 \begin{abstract}
     A Budgeted Markov Decision Process (BMDP) is an extension of a Markov Decision Process to critical applications requiring safety constraints. It relies on a notion of risk implemented in the shape of a cost signal constrained  to lie below an -- adjustable -- threshold.
-    So far, BMDPs could only be solved in the case of finite state spaces with known dynamics. This work extends the state-of-the-art to continuous spaces environments and unknown dynamics. We show that the solution to a BMDP is a fixed point of a novel Budgeted Bellman Optimality operator. This observation allows us to introduce natural extensions of Deep Reinforcement Learning algorithms to address large-scale BMDPs. We validate our approach on two simulated applications: spoken dialogue and autonomous driving\footnote{Code and instructions available at \href{https://github.com/budgeted-rl/budgeted-rl.github.io\#how-to-reproduce}{this web address} as required by the \href{https://docs.google.com/document/d/1SBCfisdLU2A_vb7K7wI8oRBin8ZA4cA1BbasqfQr5m0/edit}{Code Submission Policy}.}.
+    So far, BMDPs could only be solved in the case of finite state spaces with known dynamics. This work extends the state-of-the-art to continuous spaces environments and unknown dynamics. We show that the solution to a BMDP is a fixed point of a novel Budgeted Bellman Optimality operator. This observation allows us to introduce natural extensions of Deep Reinforcement Learning algorithms to address large-scale BMDPs. We validate our approach on two simulated applications: spoken dialogue and autonomous driving\footnote{Videos and code are available at \href{https://budgeted-rl.github.io/}{this https URL} as required by the \href{https://docs.google.com/document/d/1SBCfisdLU2A_vb7K7wI8oRBin8ZA4cA1BbasqfQr5m0/edit}{Code Submission Policy}.}.
 \end{abstract}
 
 \section{Introduction}
@@ -425,7 +425,9 @@ The task consists in driving as fast as possible, which is modelled by a reward 
 \label{subsec:results}
 In the following figures, each patch represents the mean and 95\% confidence interval over $N_{\text{seeds}}$ seeds of the means of $(G_r^\pi,G_c^\pi)$ over $N_\text{trajs}$ trajectories. That way, we display the variation related to learning (and batches) rather than the variation in the execution of the policies.
 
-We first bring to light the role of risk-sensitive exploration in the \text{corridors} environment: \Cref{fig:exploration} shows the set of trajectories collected by each exploration strategy\footnote{Animations are available in \Cref{subsec:exploration-examples}}, and the resulting performance of a budgeted policy trained on each batch. The trajectories (orange) in the risk-neutral batch are concentrated along the risky corridor (red) and ignore the safe corridor (green), which results in bad performances in the low-risk regime. Conversely, trajectories in the risk-sensitive batch (blue) are well distributed among both corridors and the corresponding budgeted policy achieves good performance across the whole spectrum of risk budgets.
+We first bring to light the role of risk-sensitive exploration in the \text{corridors} environment: \Cref{fig:exploration} shows the set of trajectories collected by each exploration strategy\footnote{Animations are available at \href{https://budgeted-rl.github.io/\#risk-sensitive-exploration}{this https URL}}, 
+%in \Cref{subsec:exploration-examples}}
+and the resulting performance of a budgeted policy trained on each batch. The trajectories (orange) in the risk-neutral batch are concentrated along the risky corridor (red) and ignore the safe corridor (green), which results in bad performances in the low-risk regime. Conversely, trajectories in the risk-sensitive batch (blue) are well distributed among both corridors and the corresponding budgeted policy achieves good performance across the whole spectrum of risk budgets.
 
 \begin{figure}[tp]
     \centering
@@ -448,7 +450,8 @@ We first bring to light the role of risk-sensitive exploration in the \text{corr
 
 In a second experiment displayed in \Cref{fig:results}, we compare the performance of \FTQl to that of \BFTQ in the dialogue and autonomous driving tasks. For each algorithm, we plot the reward-cost trade-off curve. In both cases, \BFTQ performs almost as well as \FTQl despite only requiring a single model. All budgets are well-respected on \text{slot-filling}, but on \text{highway-env} we can observe an underestimation of $Q_c$, since e.g. $\expectedvalue[G_c|\beta=0] \simeq 0.1 $. This underestimation can be a consequence of two approximations: the use of the sampling operator $\hat{\cT}$ instead of the true population operator $\cT$, and the use of the neural network function approximation $Q_\theta$ instead of $Q$. 
 % This is probably due to \text{highway-env} being actually infeasible for $\beta=0$, since we noticed that about $8\%$ of bad initialisations occur with the front vehicle driving slower than the minimum velocity of the controlled vehicle, leading to either a front collision or a forced change to the opposite lane, both yielding costs.
-Still, \BFTQ provides a better control on the expected cost of the policy, than \FTQl. In addition, \BFTQ behaves more consistently than \FTQl overall, as shown by its lower extra-seed variance. Examples of policy execution can be found in \Cref{sec:bftq-executions}.
+Still, \BFTQ provides a better control on the expected cost of the policy, than \FTQl. In addition, \BFTQ behaves more consistently than \FTQl overall, as shown by its lower extra-seed variance. Examples of policy execution can be found at \href{https://budgeted-rl.github.io/\#optimal-budgeted-policies}{this https URL}.
+%in \Cref{sec:bftq-executions}.
 
 \section{Discussion}
 \label{subsec:discussions}
