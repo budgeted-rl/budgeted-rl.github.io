@@ -9,7 +9,7 @@
 
 % to compile a preprint version, e.g., for submission to arXiv, add add the
 % [preprint] option:
-\usepackage[preprint,nonatbib]{neurips_2019}
+\usepackage[nonatbib,final]{neurips_2019}
 
 % to compile a camera-ready version, add the [final] option, e.g.:
 %\usepackage{neurips_2019}
@@ -128,7 +128,7 @@ SequeL team, INRIA Lille -- Nord Europe\footnotemark[2]\\
 \maketitle
 \begin{abstract}
     A Budgeted Markov Decision Process (BMDP) is an extension of a Markov Decision Process to critical applications requiring safety constraints. It relies on a notion of risk implemented in the shape of a cost signal constrained  to lie below an -- adjustable -- threshold.
-    So far, BMDPs could only be solved in the case of finite state spaces with known dynamics. This work extends the state-of-the-art to continuous spaces environments and unknown dynamics. We show that the solution to a BMDP is a fixed point of a novel Budgeted Bellman Optimality operator. This observation allows us to introduce natural extensions of Deep Reinforcement Learning algorithms to address large-scale BMDPs. We validate our approach on two simulated applications: spoken dialogue and autonomous driving.
+    So far, BMDPs could only be solved in the case of finite state spaces with known dynamics. This work extends the state-of-the-art to continuous spaces environments and unknown dynamics. We show that the solution to a BMDP is a fixed point of a novel Budgeted Bellman Optimality operator. This observation allows us to introduce natural extensions of Deep Reinforcement Learning algorithms to address large-scale BMDPs. We validate our approach on two simulated applications: spoken dialogue and autonomous driving\footnote{Code and instructions available at \href{https://github.com/budgeted-rl/budgeted-rl.github.io\#how-to-reproduce}{this web address} as required by the \href{https://docs.google.com/document/d/1SBCfisdLU2A_vb7K7wI8oRBin8ZA4cA1BbasqfQr5m0/edit}{Code Submission Policy}.}.
 \end{abstract}
 
 \section{Introduction}
@@ -152,7 +152,7 @@ This constrained framework allows for better control of the performance-safety t
 
 To address this concern, the \emph{Budgeted Markov Decision Process} (BMDP) was introduced in \citep{Boutilier_Lu:uai16} as an extension of CMDPs to enable the online control over the budget $\beta$ within an interval $\cB \subset \Real$ of admissible budgets. Instead of fixing the budget prior to training, the objective is now to find a generic optimal policy $\pi^*$ that takes $\beta$ as input so as to solve the corresponding CMDP (Eq. \eqref{eq:cmdp}) for all $\beta\in\cB$. This gives the system designer the ability to move the optimal policy $\pi^*$ in real-time along the Pareto-optimal curve of the different reward-cost trade-offs.
 
-Our first contribution is to re-frame the original BMDP formulation in the context of continuous states and infinite discounted horizon. We then propose a novel Budgeted Bellman Optimality Operator and prove the optimal value function to be a fixed point of this operator. Second, we use this operator in \BFTQ, a batch Reinforcement Learning algorithm, for solving BMDPs online by interaction with an environment, through function approximation and a tailored exploration procedure. Third, we scale this algorithm to large problems by providing an efficient implementation of the Budgeted Bellman Optimality Operator based on convex programming, and by leveraging tools from Deep Reinforcement Learning such as Deep Neural Networks and synchronous parallel computing. Finally, we validate our approach in two environments that display a clear trade-off between rewards and costs: a spoken dialogue system and a problem of behaviour planning for autonomous driving. The proofs of our main results are provided in \Cref{sec:proofs}.
+Our first contribution is to re-frame the original BMDP formulation in the context of continuous states and infinite discounted horizon. We then propose a novel Budgeted Bellman Optimality Operator and prove the optimal value function to be a fixed point of this operator. Second, we use this operator in \BFTQ, a batch Reinforcement Learning algorithm, for solving BMDPs online by interaction with an environment, through function approximation and a tailored exploration procedure. Third, we scale this algorithm to large problems by providing an efficient implementation of the Budgeted Bellman Optimality Operator based on convex programming, a risk-sensitive exploration procedure, and by leveraging tools from Deep Reinforcement Learning such as Deep Neural Networks and synchronous parallel computing. Finally, we validate our approach in two environments that display a clear trade-off between rewards and costs: a spoken dialogue system and a problem of behaviour planning for autonomous driving. The proofs of our main results are provided in \Cref{sec:proofs}.
 
 \section{Budgeted Dynamic Programming}
 \label{sec:bdp}
@@ -184,7 +184,7 @@ and the value functions $V^\pi$, $Q^\pi$ of a budgeted policy $\pi\in\Pi$ are de
     \label{eq:value-function}
 V^\pi(\os) = (V_r^\pi, V_c^\pi) \eqdef \expectedvalue\left[ G^\pi \condbar \ov{s_0} = \os\right] \qquad Q^\pi(\os, \oa)= (Q_r^\pi, Q_c^\pi) \eqdef \expectedvalue\left[ G^\pi \condbar \ov{s_0} = \os, \ov{a_0} = \oa\right].
 \end{equation}
-We restrict $\ocS$ to feasible budgets only: $\ocS_f \eqdef \{(s,\beta)\in\ocS: \exists \pi\in\Pi, V_c^\pi(s) \geq \beta\}$ that we assume is non-empty for the BMDP to admit a solution. We still write $\ocS$ in place of $\ocS_f$ for brevity of notations.
+We restrict $\ocS$ to feasible budgets only: $\ocS_f \eqdef \{(s,\beta)\in\ocS: \exists \pi\in\Pi, V_c^\pi(s) \leq \beta\}$ that we assume is non-empty for the BMDP to admit a solution. We still write $\ocS$ in place of $\ocS_f$ for brevity of notations.
 
 \begin{proposition}[Budgeted Bellman Expectation]
 \label{prop:bellman-expectation}
@@ -262,17 +262,16 @@ The Budgeted Bellman Optimality equation is a fixed-point equation, which motiva
 For any BMDP ($\cS,\cA,P,R_r,R_c,\gamma$) with $|\cA| \geq 2$, $\cT$ is not a contraction. Precisely: $\forall\epsilon>0, \exists Q^1,Q^2\in(\Real^2)^{\ocS\ocA}:\|\cT Q^1-\cT Q^2\|_\infty \geq \frac{1}{\epsilon}\|Q^1-Q^2\|_\infty$.
 \end{theorem}
 
-Unfortunately, as $\cT$ is not a contraction, we can guarantee neither the convergence of \Cref{algo:bvi} nor the unicity of its fixed points. Despite those theoretical limitations, we empirically observed the convergence to a fixed point in our experiments (\Cref{sec:experiements}). We conjecture a possible explanation:
+Unfortunately, as $\cT$ is not a contraction, we can guarantee neither the convergence of \Cref{algo:bvi} nor the unicity of its fixed points. Despite those theoretical limitations, we empirically observed the convergence to a fixed point in our experiments (\Cref{sec:experiments}). We conjecture a possible explanation:
 
-\begin{remark}[Contractivity of $\cT$ on smooth $Q$-functions]
+\begin{theorem}[Contractivity of $\cT$ on smooth $Q$-functions]
 \label{rmk:contractivity-smooth}
-We conjecture that $\cT$ is a contraction when restricted to the subset $\cL_\gamma$ of $Q$-functions such that "$Q_r$ is $L$-Lipschitz with respect to $Q_c$", with $L<\frac{1}{\gamma}-1$. We lengthily discuss some intuition on why that should be the case in \Cref{proof:contraction-with-smooth}.
+The operator $\cT$ is a contraction when restricted to the subset $\cL_\gamma$ of $Q$-functions such that "$Q_r$ is $L$-Lipschitz with respect to $Q_c$", with $L<\frac{1}{\gamma}-1$. %We lengthily discuss some intuition on why that should be the case in \Cref{proof:contraction-with-smooth}.
+\end{theorem}
+
+\begin{remark}
+Because of the budget dynamics $\beta' = \beta_a$ in \eqref{eq:dynamics}, we can see in \eqref{eq:bellman_expectation} that for all $\os=(s, \beta)$ and $\oa=(a, \beta_a)$, $Q^\pi(\os, \oa)$ only depends on $s, a, \beta_a$ and not on $\beta$. We will slightly abuse notations and sometimes denote in the following $Q^\pi(s, a, \beta_a) \eqdef Q^\pi(\os, \oa)$.
 \end{remark}
-
-
-
-
-% Because of the budget dynamics $\beta' = \beta_a$ in \eqref{eq:dynamics}, we can see in \eqref{eq:bellman_expectation} that for all $\os=(s, \beta)$ and $\oa=(a, \beta_a)$, $Q^\pi(\os, \oa)$ only depends on $s, a, \beta_a$ and not on $\beta$. We will slightly abuse notations and sometimes denote in the following $Q^\pi(s, a, \beta_a) \eqdef Q^\pi(\os, \oa)$.
 
 \section{Budgeted Reinforcement Learning}
 \label{sec:brl}
@@ -282,9 +281,9 @@ In this section, we consider BMDPs with unknown parameters that must be solved b
 \subsection{Budgeted Fitted-Q}
 \label{subsec:bftq}
 
-When the BMDP is unknown, we need to adapt \Cref{algo:bvi} to work with a batch of samples $\cD=\{(\os_i,\oa_i,r_i,\os_i'\}_{i\in [0,N]}$ collected by interaction with the environment. Applying $\cT$ in \eqref{eq:bellman-optimality} would require computing an expectation $\expectedvalue_{\os'\sim \ov{P}}$ over next states $\os'$ and hence an access to the model $\ov{P}$. We instead use $\hat{\cT}$, a sampling operator, in which this expectation is replaced by:
+When the BMDP is unknown, we need to adapt \Cref{algo:bvi} to work with a batch of samples $\cD=\{(\os_i,\oa_i,r_i,\os_i')\}_{i\in [1,N]}$ collected by interaction with the environment. Applying $\cT$ in \eqref{eq:bellman-optimality} would require computing an expectation $\expectedvalue_{\os'\sim \ov{P}}$ over next states $\os'$ and hence an access to the model $\ov{P}$. We instead use $\hat{\cT}$, a sampling operator, in which this expectation is replaced by:
 \begin{equation*}
-    \hat{\cT} Q(\os_i, \oa_i, r_i, \os'_i) \eqdef r_i + \gamma \sum_{\ov{a'_i}\in \cA_i} \pi_\text{greedy}(\ov{a'_i}|\ov{s'_i}; Q) Q(\ov{s'_i}, \ov{a'_i}).
+    \hat{\cT} Q(\os, \oa, r, \os') \eqdef r + \gamma \sum_{\ov{a'}\in \ocA} \pi_\text{greedy}(\ov{a'}|\ov{s'}; Q) Q(\ov{s'}, \ov{a'}).
 \end{equation*}
 We introduce in \Cref{algo:bftq} the \emph{Budgeted-Fitted-Q} (\BFTQ) algorithm, an extension of the \emph{Fitted-Q} (\FTQ) algorithm \citep{Ernst2005,Riedmiller2005} adapted to solve unknown BMDPs. Because we work with continuous state space $\cS$ and budget space $\cB$, we need to employ function-approximation in order to generalise to nearby states and budgets. Precisely, given a parametrized model $Q_\theta$, we seek to minimise a regression loss $\cL(Q_\theta, Q_\text{target};\cD) = \sum_{\cD} ||Q_\theta(\os, \oa) - Q_\text{target}(\os, \oa, r, \os')||_2^2$.
 Any model can be used, such as linear models, regression trees, or neural networks.
@@ -328,7 +327,15 @@ $Q_{\theta_0} \leftarrow 0$\;
 \subsection{Risk-sensitive exploration}
 \label{sec:exploration}
 
-In order to run \Cref{algo:bftq}, we must first gather a batch of samples $\mathcal{D}$. Ideally we would need samples from the asymptotic state-budget distribution $\lim_{t\rightarrow\infty}\probability{\os_t}$ induced by an optimal policy $\pi^*$ given an initial distribution $\probability{\os_0}$, but as we are actually building this policy, it is not possible. Following the same idea of $\epsilon$-greedy exploration for \FTQ \citep{Ernst2005,Riedmiller2005}, we introduce an algorithm for risk-sensitive exploration. We follow an exploration policy: a mixture between a random budgeted policy $\pi_\text{rand}$ and the current greedy policy $\pi_\text{greedy}$. The batch $\cD$ is split into several mini-batches generated sequentially, and $\pi_\text{greedy}$ is updated by running \Cref{algo:bftq} on $\cD$ upon mini-batch completion. $\pi_\text{rand}$ is designed to obtain trajectories that only explore feasible budgets: we impose that the joint distribution $\probability{a, \beta_a|s, \beta}$ verifies $\expectedvalue[\beta_a]\leq\beta$. This condition defines a probability simplex $\Delta_{\ocA}$ from which we sample uniformly. Finally, when interacting with an environment the initial state $s_0$ is usually sampled from a starting distribution $\probability{s_0}$. In the budgeted setting, we also need to sample the initial budget $\beta_0$. Importantly, we pick a uniform distribution $\probability{\beta_0} = \cU(\cB)$ so that the entire range of risk-level is explored, and not only reward-seeking behaviours as would be the case with a traditional risk-neutral $\epsilon$-greedy strategy. The pseudo-code of our exploration procedure is shown in \Cref{algo:risk-sensitive-exploration} in \Cref{sec:risk-sensitive-supp}.
+In order to run \Cref{algo:bftq}, we must first gather a batch of samples $\mathcal{D}$. The following strategy is motivated by the intuition that a wide variety of risk levels needs to be experienced during training, which can be achieved by enforcing the risk constraints during data collection. Ideally we would need samples from the asymptotic state-budget distribution $\lim_{t\rightarrow\infty}\probability{\os_t}$ induced by an optimal policy $\pi^*$ given an initial distribution $\probability{\os_0}$, but as we are actually building this policy, it is not possible. Following the same idea of $\epsilon$-greedy exploration for \FTQ \citep{Ernst2005,Riedmiller2005}, we introduce an algorithm for risk-sensitive exploration. We follow an exploration policy: a mixture between a random budgeted policy $\pi_\text{rand}$ and the current greedy policy $\pi_\text{greedy}$. The batch $\cD$ is split into several mini-batches generated sequentially, and $\pi_\text{greedy}$ is updated by running \Cref{algo:bftq} on $\cD$ upon mini-batch completion. $\pi_\text{rand}$ should only pick augmented actions that are admissible candidates for $\pi_\text{greedy}$. To that extent $\pi_\text{rand}$ is designed to obtain trajectories that only explore feasible budgets: we impose that the joint distribution $\probability{a, \beta_a|s, \beta}$ verifies $\expectedvalue[\beta_a]\leq\beta$. This condition defines a probability simplex $\Delta_{\ocA}$ from which we sample uniformly. Finally, when interacting with an environment the initial state $s_0$ is usually sampled from a starting distribution $\probability{s_0}$. In the budgeted setting, we also need to sample the initial budget $\beta_0$. Importantly, we pick a uniform distribution $\probability{\beta_0} = \cU(\cB)$ so that the entire range of risk-level is explored, and not only reward-seeking behaviours as would be the case with a traditional risk-neutral $\epsilon$-greedy strategy. The pseudo-code of our exploration procedure is shown in \Cref{algo:risk-sensitive-exploration}.% in \Cref{sec:risk-sensitive-supp}.
+
+%\section{Risk-Sensitive Exploration}
+%\label{sec:risk-sensitive-supp}
+%We recall the Risk-Sensitive Exploration in \Cref{algo:risk-sensitive-exploration}:
+
+
+\input{source/risk-sensitive-explo-pseudo-code.tex}
+
 
 \section{A Scalable Implementation}
 \label{sec:scalable-bftq}
@@ -336,9 +343,7 @@ In this section, we introduce an implementation of the \BFTQ algorithm designed 
 
 \subsection{How to compute the greedy policy?}
 \label{subsec:compute-greedy-policy}
-As stated in \Cref{rmk:greedy}, computing the greedy policy $\pi_\text{greedy}$ in \eqref{eq:bellman-optimality} is not trivial since it requires solving the nested constrained optimisation program \eqref{eq:pi_greedy}.
-% In order to apply $\cT$ in \eqref{eq:bellman-optimality}, it is necessary to compute the greedy policy $\pi_\text{greedy}(s; Q)$. Contrary to classical Dynamic Programming where it takes the simple form $\argmax_{a\in\cA} Q(s, a)$, in a budgeted setting is not trivial since it requires solving the nested constrained optimisation program \eqref{eq:pi_greedy}.
-However, it can be solved efficiently by exploiting the \emph{structure} of the set of solutions with respect to $\beta$, that is, concave and increasing. 
+As stated in \Cref{rmk:greedy}, computing the greedy policy $\pi_\text{greedy}$ in \eqref{eq:bellman-optimality} is not trivial since it requires solving the nested constrained optimisation program \eqref{eq:pi_greedy}. However, it can be solved efficiently by exploiting the \emph{structure} of the set of solutions with respect to $\beta$, that is, concave and increasing. 
 
 \begin{proposition}[Equality of $\pi_\text{greedy}$ and $\pi_\text{hull}$]
 \label{prop:bftq_pi_hull}
@@ -359,24 +364,28 @@ $\cF_Q \leftarrow \cF\cap Q(\os,\ocA)$\;
 $p \leftarrow (\beta - q_c^1) / (q_c^2 - q_c^1)$\;
 \Return the mixture $(1-p)\delta(\oa-\oa^1) + p\delta(\oa-\oa^2)$\;
 }}
-\lElse{\Return $\delta(\oa - \argmax_{\oa} Q_r(\os,\oa))$\tcp*[f]{budget $\beta$ always respected}}
+\Return $\delta(\oa - \argmax_{\oa} Q_r(\os,\oa))$\tcp*[f]{budget $\beta$ always respected}
 \caption{Convex hull policy $\pi_\text{hull}(\oa|\os; Q)$}
 \label{algo:pi_hull}
 \end{algorithm}
 
-The computation of $\pi_\text{hull}$ in \Cref{algo:pi_hull} is illustrated in \Cref{fig:hull}.
-
 %\begin{minipage}[t]{0.5\textwidth}
 %\vspace{0pt}
-%\begin{wrapfigure}{r}{0.5\textwidth}
-\begin{figure}[ht]
+\begin{wrapfigure}{r}{0.6\textwidth}
+\vspace{-15pt}
+%\begin{figure}[ht]
     \centering
-    \includegraphics[width=0.7\linewidth]{source/img/pi.pdf}
+    \includegraphics[width=1.0\linewidth]{source/img/pi.pdf}
     \caption{Representation of $\pi_\text{hull}$. When the budget lies between $Q(\os,\oa_1)$ and $Q(\os,\oa_2)$, two points of the top frontier of the convex hull, then the policy is a mixture of these two points.}
     \label{fig:hull}
-\end{figure}
-%\end{wrapfigure}
+%\end{figure}
+\vspace{-30pt}
+\end{wrapfigure}
 %\end{minipage}
+
+The computation of $\pi_\text{hull}$ in \Cref{algo:pi_hull} is illustrated in \Cref{fig:hull}: first we get rid of dominated points. Then we compute the top frontier of the convex hull of the $Q$-function. Next, we find the two closest augmented actions $\ov{a}_1$ and $\ov{a}_2$ with cost-value $Q_c$ surrounding $\beta$:  $Q_c(\os,\oa_1)\leq\beta<Q_c(\os,\oa_2)$. Finally, we mix the two actions such that the expected spent budget is equal to $\beta$. Because of the concavity of the convex hull top frontier, any other combination of augmented actions would lead to a lower expected reward $Q_r$. 
+
+
 
 
 \subsection{Function approximation}
@@ -389,7 +398,7 @@ In a simulated environment, a first process that can be distributed is the colle
 The full description of our scalable implementation of \BFTQ is recalled in \Cref{algo:bftq_full} in \Cref{sec:bftq-full}.
 
 \section{Experiments}
-\label{sec:experiements}
+\label{sec:experiments}
 There are two hypotheses we want to validate.
 
 \paragraph{Exploration strategies}\label{par:ex-explo} We claimed in \Cref{sec:exploration} that a risk-sensitive exploration was required in the setting of BMDPs. We test this hypotheses by confronting our strategy to a classical risk-neutral strategy. The latter is chosen to be a $\epsilon$-greedy policy slowly transitioning from a random to a greedy policy\footnote{We train this greedy policy using \FTQ.} that aims to maximise $\expectedvalue_{\pi} G_r^\pi$ regardless of $\expectedvalue_{\pi} G_c^\pi$. The quality of the resulting batches $\cD$ is assessed by training a \BFTQ policy and comparing the resulting performance.
@@ -437,7 +446,7 @@ We first bring to light the role of risk-sensitive exploration in the \text{corr
     \end{center}
 \end{figure}
 
-In a second experiment displayed in \Cref{fig:results}, we compare the performance of \FTQl to that of \BFTQ in the dialogue and autonomous driving tasks. For each algorithm, we plot the reward-cost trade-off curve. In both cases, \BFTQ performs almost as well as \FTQl despite only requiring a single model. All budgets are well-respected on \text{slot-filling}, but on \text{highway-env} we can observe an underestimation of $Q_c$, since e.g. $\expectedvalue[G_c|\beta=0] \simeq 0.1 $. This underestimation can be a consequence of two approximations: the use of the sampling operator $\hat{\cT}$ instead of the true environmental operator $\cT$, and the use of the neural network function approximation $Q_\theta$ instead of $Q$. 
+In a second experiment displayed in \Cref{fig:results}, we compare the performance of \FTQl to that of \BFTQ in the dialogue and autonomous driving tasks. For each algorithm, we plot the reward-cost trade-off curve. In both cases, \BFTQ performs almost as well as \FTQl despite only requiring a single model. All budgets are well-respected on \text{slot-filling}, but on \text{highway-env} we can observe an underestimation of $Q_c$, since e.g. $\expectedvalue[G_c|\beta=0] \simeq 0.1 $. This underestimation can be a consequence of two approximations: the use of the sampling operator $\hat{\cT}$ instead of the true population operator $\cT$, and the use of the neural network function approximation $Q_\theta$ instead of $Q$. 
 % This is probably due to \text{highway-env} being actually infeasible for $\beta=0$, since we noticed that about $8\%$ of bad initialisations occur with the front vehicle driving slower than the minimum velocity of the controlled vehicle, leading to either a front collision or a forced change to the opposite lane, both yielding costs.
 Still, \BFTQ provides a better control on the expected cost of the policy, than \FTQl. In addition, \BFTQ behaves more consistently than \FTQl overall, as shown by its lower extra-seed variance. Examples of policy execution can be found in \Cref{sec:bftq-executions}.
 
@@ -458,12 +467,10 @@ The only other existing BMDP algorithm, and closest work to ours, is the Dynamic
 \label{sec:conclusion}
 The BMDP framework is a principled framework for safe decision making under uncertainty, which could be beneficial to the diffusion of Reinforcement Learning in industrial applications. However, BMDPs could so far only be solved in finite state spaces which limits their interest in many use-cases. We extend their definition to continuous states by introducing of a novel Dynamic Programming operator, that we build upon to propose a Reinforcement Learning algorithm. In order to scale to large problems, we provide an efficient implementation that exploits the structure of the value function and leverages tools from Deep Distributed Reinforcement Learning. We show that on two practical tasks our solution performs similarly to a baseline Lagrangian relaxation method while only requiring a single model to train, and relying on an interpretable $\beta$ instead of the tedious tuning of the penalty $\lambda$.
 
-
-
-    \section*{Acknowledgments}
+\section*{Acknowledgements}
     %
-    This work has been supported by CPER Nord-Pas de Calais/FEDER DATA Advanced data science and technologies 2015-2020, the French Ministry of Higher Education and Research, INRIA, and the French Agence Nationale de la Recherche (ANR). We thank Guillaume Gautier, Fabrice Clerot, Xuedong Shang for the helpful discussions and valuable insights.
-%\clearpage
+    This work has been supported by CPER Nord-Pas de Calais/FEDER DATA Advanced data science and technologies 2015-2020, the French Ministry of Higher Education and Research, INRIA, and the French Agence Nationale de la Recherche (ANR). We thank Guillaume Gautier, Fabrice Clerot, and Xuedong Shang for the helpful discussions and valuable insights.
+\clearpage
 \bibliographystyle{named}
 \bibliography{budgeted_rl}
 
