@@ -53,7 +53,7 @@ We display the evolution in the budgeted policy behavior with respect to the bud
 
 # How to reproduce
 
-### Method 1
+### Method 1 (only for highway-env)
 
 Install requirements:
 * The environment: [highway-env](https://github.com/eleurent/highway-env)
@@ -67,7 +67,7 @@ python experiments.py evaluate scripts/configs/TwoWayEnv/env.json \
                                --train --episodes=1000
 ```
 
-### Method 2
+### Method 2 (slot-filling, highway-env, corridors)
 
 * Clone [@ncarrara's phd code](https://github.com/ncarrara/phd_code)
 * Run main script using any config file. Choose the range of seeds you want to test on:
