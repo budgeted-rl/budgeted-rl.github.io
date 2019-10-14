@@ -53,10 +53,11 @@ We display the evolution in the budgeted policy behavior with respect to the bud
 
 # How to reproduce
 
-### Method 1 (only for highway-env)
+First install the following conventional libraries for python3: pycairo, numpy, scipy and pytorch. Install the highway-env environment [highway-env](https://github.com/eleurent/highway-env). Then, use one of these methods:
+
+### Method 1 (well commented and understandable, but only for highway-env)
 
 Install requirements:
-* The environment: [highway-env](https://github.com/eleurent/highway-env)
 * The agents: [rl-agents](https://github.com/eleurent/rl-agents)
 
 Run the training:
