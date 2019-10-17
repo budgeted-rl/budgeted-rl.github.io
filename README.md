@@ -58,7 +58,7 @@ First install the following conventional libraries for python3: pycairo, numpy, 
 ### Method 1 (for highway-env: repository eleurent)
 
 Install requirements:
-* The agents: [rl-agents](https://github.com/eleurent/rl-agents)
+* The agents: [eleurent@rl-agents](https://github.com/eleurent/rl-agents)
 
 Run the training:
 ```shell
@@ -70,14 +70,14 @@ python experiments.py evaluate scripts/configs/TwoWayEnv/env.json \
 
 ### Method 2 (for slot-filling, highway-env,and corridors: repository ncarrara)
 
-* Clone [scaling-up-brl](https://github.com/ncarrara/scaling-up-brl)
+* Clone [ncarrara@budgeted-rl](https://github.com/ncarrara/budgeted-rl)
 * Change python path to the path of this repository
 ```shell
-export PYTHONPATH="scaling-up-brl/budgeted-rl"
+export PYTHONPATH="budgeted-rl/ncarrara"
 ```
 * Navigate to budgeted-rl folder
 ```shell
-cd scaling-up-brl/budgeted-rl/
+cd budgeted-rl/ncarrara/budgeted-rl
 ```
 * Run main script using any config file. Choose the range of seeds you want to test on:
 ```shell
