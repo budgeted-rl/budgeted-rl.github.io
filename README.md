@@ -70,7 +70,15 @@ python experiments.py evaluate scripts/configs/TwoWayEnv/env.json \
 
 ### Method 2 (for slot-filling, highway-env,and corridors: repository ncarrara)
 
-* Clone [@ncarrara's phd code](https://github.com/ncarrara/phd_code)
+* Clone [scaling-up-brl](https://github.com/ncarrara/scaling-up-brl)
+* Change python path to the path of this repository
+```shell
+export PYTHONPATH="scaling-up-brl/budgeted-rl"
+```
+* Navigate to budgeted-rl folder
+```shell
+cd scaling-up-brl/budgeted-rl/
+```
 * Run main script using any config file. Choose the range of seeds you want to test on:
 ```shell
 python main/egreedy/main-egreedy.py config/slot-filling.json 0 6
