@@ -450,6 +450,10 @@ It remains to show that $q^1$ and $q^2$ are two successive points in $\cF_Q$: $\
 
 We recall the scalable version of BFTQ in \Cref{algo:bftq_full} and the architecture of the neural network \Cref{fig:architecture}.
 
+\begin{remark}
+Because of the budget dynamics $\beta' = \beta_a$ in \eqref{eq:dynamics}, we can see in \eqref{eq:bellman_expectation} that for all $\os=(s, \beta)$ and $\oa=(a, \beta_a)$, $Q^\pi(\os, \oa)$ only depends on $s, a, \beta_a$ and not on $\beta$. We will slightly abuse notations and sometimes denote in the following $Q^\pi(s, a, \beta_a) \eqdef Q^\pi(\os, \oa)$.
+\end{remark}
+
 %\begin{minipage}[t]{0.5\textwidth}
 \begin{figure}[tp]
     \centering
@@ -511,74 +515,6 @@ Animations are displayed at  \href{https://budgeted-rl.github.io/\#optimal-budge
 
 The following section displays environments and algorithms parameters and instructions to reproduce the exact same results displayed in \Cref{sec:experiments}.
 
-\subsubsection{Environments Parameters}
-\label{sec:env-parameters}
-
-All environments parameters are displayed in \Cref{tab:param-corridors}, \Cref{tab:param-slot-filling} and \Cref{tab:param-highway-env}.
-
-
-\paragraph{State-Space}
-
-The states $s$ (from $\os=(s,\beta)$) of the agent are described in the following:
-
-\begin{itemize}
-    \item \texttt{Corridors}: $s = (x,y)$ where $x$ and $y$ are the 2D coordinates of the agent.
-    \item \texttt{Slot-Filling}: $s = (\text{srs},\text{min},a_u,a_s,t)$ where $\text{srs}$ is a vector of the speech recognition score for each slot, $\text{min}$ is a one hot vector describing the minimum of the $\text{srs}$ vector, $a_u$ is a one hot vector of the last user dialogue act and $a_s$ is the one hot vector of the last system dialogue act. Finally $t\in[0,1]$ is the fraction of the current turn with the maximum number of turns authorised.
-    \item \texttt{Highway-Env}: the positions $(x, y)$ and velocities $(\dot{x}, \dot{y})$ of every vehicle on the road.
-\end{itemize}
-
-
-\begin{table}[ht!]
-    \centering
-    \begin{tabularx}{1.0\textwidth}{lll}
-        \toprule
-        Parameter & Description & Value\tabularnewline
-        \midrule
-        - & Size of the environment & 7 x 6\tabularnewline
-        - & \makecell[l]{Standard deviation of the Gaussian \\noise applied to actions} & (0.25,0.25)\tabularnewline
-        H & Episode duration & 9\tabularnewline
-        \bottomrule
-    \end{tabularx}
-    \caption{Parameters of \texttt{Corridors}}
-    \label{tab:param-corridors}
-\end{table}
-
-\begin{table}[ht!]
-    \centering
-    \begin{tabularx}{1.0\textwidth}{lll}
-        \toprule
-        Parameter & Description & Value\tabularnewline
-        \midrule
-        ser & Sentence Error Rate & 0.6\tabularnewline
-        $\mu_m$& Gaussian mean for misunderstanding & -0.25\tabularnewline
-        $\mu_u$& Gaussian mean for understanding & 0.25\tabularnewline
-        $\sigma$& Gaussian standard deviation & 0.6\tabularnewline
-        $p$& Probability of hang-up & 0.25\tabularnewline
-        H & Episode duration & 10\tabularnewline
-        - & Number of slots & 3\tabularnewline
-        \bottomrule
-    \end{tabularx}
-    \caption{Parameters of \texttt{Slot-Filling}}
-    \label{tab:param-slot-filling}
-\end{table}
-
-
-\begin{table}[ht!]
-    \centering
-    \begin{tabularx}{1.0\textwidth}{lll}
-        \toprule
-        Parameter & Description & Value\tabularnewline
-        \midrule
-        $N_v$& Number of vehicles & 2 - 6\tabularnewline
-        $\sigma_p$& Standard deviation of vehicles initial positions & 100 m\tabularnewline
-        $\sigma_v$& Standard deviation of vehicles initial velocities & 3 m/s\tabularnewline
-        H & Episode duration & 15 s\tabularnewline
-        \bottomrule
-    \end{tabularx}
-
-    \caption{Parameters of \texttt{highway-env}}
-    \label{tab:param-highway-env}
-\end{table}
 
 \subsubsection{Algorithm parameters}
 \label{sec:algorithms-parameters}
@@ -679,6 +615,75 @@ We performed a shallow grid-search for the classic Neural-Network parameters. Mo
     \label{tab:param-algo-highway-env}
 \end{table}
 
+\subsubsection{Environments Parameters}
+\label{sec:env-parameters}
+
+All environments parameters are displayed in \Cref{tab:param-corridors}, \Cref{tab:param-slot-filling} and \Cref{tab:param-highway-env}.
+
+
+\paragraph{State-Space}
+
+The states $s$ (from $\os=(s,\beta)$) of the agent are described in the following:
+
+\begin{itemize}
+    \item \texttt{Corridors}: $s = (x,y)$ where $x$ and $y$ are the 2D coordinates of the agent.
+    \item \texttt{Slot-Filling}: $s = (\text{srs},\text{min},a_u,a_s,t)$ where $\text{srs}$ is a vector of the speech recognition score for each slot, $\text{min}$ is a one hot vector describing the minimum of the $\text{srs}$ vector, $a_u$ is a one hot vector of the last user dialogue act and $a_s$ is the one hot vector of the last system dialogue act. Finally $t\in[0,1]$ is the fraction of the current turn with the maximum number of turns authorised.
+    \item \texttt{Highway-Env}: the positions $(x, y)$ and velocities $(\dot{x}, \dot{y})$ of every vehicle on the road.
+\end{itemize}
+
+
+\begin{table}[ht!]
+    \centering
+    \begin{tabularx}{1.0\textwidth}{lll}
+        \toprule
+        Parameter & Description & Value\tabularnewline
+        \midrule
+        - & Size of the environment & 7 x 6\tabularnewline
+        - & \makecell[l]{Standard deviation of the Gaussian \\noise applied to actions} & (0.25,0.25)\tabularnewline
+        H & Episode duration & 9\tabularnewline
+        \bottomrule
+    \end{tabularx}
+    \caption{Parameters of \texttt{Corridors}}
+    \label{tab:param-corridors}
+\end{table}
+
+\begin{table}[ht!]
+    \centering
+    \begin{tabularx}{1.0\textwidth}{lll}
+        \toprule
+        Parameter & Description & Value\tabularnewline
+        \midrule
+        ser & Sentence Error Rate & 0.6\tabularnewline
+        $\mu_m$& Gaussian mean for misunderstanding & -0.25\tabularnewline
+        $\mu_u$& Gaussian mean for understanding & 0.25\tabularnewline
+        $\sigma$& Gaussian standard deviation & 0.6\tabularnewline
+        $p$& Probability of hang-up & 0.25\tabularnewline
+        H & Episode duration & 10\tabularnewline
+        - & Number of slots & 3\tabularnewline
+        \bottomrule
+    \end{tabularx}
+    \caption{Parameters of \texttt{Slot-Filling}}
+    \label{tab:param-slot-filling}
+\end{table}
+
+
+\begin{table}[ht!]
+    \centering
+    \begin{tabularx}{1.0\textwidth}{lll}
+        \toprule
+        Parameter & Description & Value\tabularnewline
+        \midrule
+        $N_v$& Number of vehicles & 2 - 6\tabularnewline
+        $\sigma_p$& Standard deviation of vehicles initial positions & 100 m\tabularnewline
+        $\sigma_v$& Standard deviation of vehicles initial velocities & 3 m/s\tabularnewline
+        H & Episode duration & 15 s\tabularnewline
+        \bottomrule
+    \end{tabularx}
+
+    \caption{Parameters of \texttt{highway-env}}
+    \label{tab:param-highway-env}
+\end{table}
+
 \subsubsection{Instructions for reproducibility}
 \label{subsubsec:instruction-reproducibility}
 To reproduce the result displayed in \Cref{sec:experiments}, first install the following conventional libraries for python3: pycairo, numpy, scipy and pytorch. Then, execute the commands in \Cref{fig:instructions} on a Linux Operating System. The Graphic Processing Unit used for experiments is an NVIDIA \texttt{GeForce GTX 1080 Ti} and the Computational Processing Unit is an Intel \texttt{Xeon E7}. Then, follow the instructions in \Cref{fig:instructions}. For more details, check  \href{https://budgeted-rl.github.io/\#how-to-reproduce}{this https URL}.
@@ -692,16 +697,16 @@ To reproduce the result displayed in \Cref{sec:experiments}, first install the f
 # Install highway-env
 pip3 install --user git+https://github.com/eleurent/rl-agents
 # clone the phd_code repository
-git clone https://github.com/ncarrara/phd_code
+git clone https://github.com/ncarrara/budgeted-rl
 # Change python path to the path of this repository
-export PYTHONPATH="phd_code/ncarrara"
+export PYTHONPATH="budgeted-rl/ncarrara"
 # Navigate to budgeted-rl folder
-cd phd_code/ncarrara/budgeted-rl/
+cd budgeted-rl/ncarrara/budgeted-rl
 # Run main script using any config file
 # Choose the range of seeds you want to test on
 python3 main/egreedy/main-egreedy.py config/slot-filling.json 0 6
 python3 main/egreedy/main-egreedy.py config/corridors.json 0 4
-python3 main/egreedy/main-egreedy.py config/highway-easy.json 0 10
+python3 main/egreedy/main-egreedy.py config/highway-two-way.json 0 10
 \end{lstlisting}
 %\end{minted}
 
@@ -724,7 +729,7 @@ For all models and algorithms presented, indicate if you include:
     \begin{itemize}\item \textbf{yes}, see \Cref{subsec:parallel-computing}.
     \end{itemize}
     \item A link to a downloadable source code, with specification of all dependencies, including external libraries:
-    \begin{itemize}\item \textbf{yes}, see \Cref{subsubsec:instruction-reproducibility} and the folder \texttt{code} in the supplementary material zip file.
+    \begin{itemize}\item \textbf{yes}, see \Cref{subsubsec:instruction-reproducibility}. All resources are available at \href{https://budgeted-rl.github.io}{this https URL}.
     \end{itemize}
 \end{itemize}
 
@@ -754,7 +759,7 @@ For all figures and tables that present empirical results, indicate if you inclu
     \item A link to a downloadable version of the dataset or simulation environment:
     
         \begin{itemize}
-            \item  \textbf{yes}, two environments   are shipped with the supplementary material (in the \texttt{code} folder) and the third one is fetch from a public repository, see \Cref{subsubsec:instruction-reproducibility} for details.
+            \item  \textbf{yes}, all environments  are fetched from public repositories, see \Cref{subsubsec:instruction-reproducibility} for details.
         \end{itemize}
     \item An explanation of any data that were excluded, description of any pre-processing step: 
         \begin{itemize}
@@ -799,6 +804,6 @@ For all figures and tables that present empirical results, indicate if you inclu
             \item  \textbf{yes}, we even observe less variability with our novel approach, see \Cref{subsec:results}.
         \end{itemize}
     \item A description of the computing infrastructure used:     \begin{itemize}
-            \item The Graphic Processing Unit used for experiments is an NVIDIA \texttt{GeForce GTX 1080 Ti} and the Computational Processing Unit is an Intel \texttt{Xeon E7}.
+            \item The Graphic Processing Unit used for experiments is an NVIDIA \texttt{GeForce GTX 1080 Ti} and the Central Processing Unit is an Intel \texttt{Xeon E7}.
         \end{itemize}
 \end{itemize}

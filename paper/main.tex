@@ -128,7 +128,9 @@ SequeL team, INRIA Lille -- Nord Europe\footnotemark[2]\\
 \maketitle
 \begin{abstract}
     A Budgeted Markov Decision Process (BMDP) is an extension of a Markov Decision Process to critical applications requiring safety constraints. It relies on a notion of risk implemented in the shape of a cost signal constrained  to lie below an -- adjustable -- threshold.
-    So far, BMDPs could only be solved in the case of finite state spaces with known dynamics. This work extends the state-of-the-art to continuous spaces environments and unknown dynamics. We show that the solution to a BMDP is a fixed point of a novel Budgeted Bellman Optimality operator. This observation allows us to introduce natural extensions of Deep Reinforcement Learning algorithms to address large-scale BMDPs. We validate our approach on two simulated applications: spoken dialogue and autonomous driving\footnote{Videos and code are available at \href{https://budgeted-rl.github.io/}{this https URL} as required by the \href{https://docs.google.com/document/d/1SBCfisdLU2A_vb7K7wI8oRBin8ZA4cA1BbasqfQr5m0/edit}{Code Submission Policy}.}.
+    So far, BMDPs could only be solved in the case of finite state spaces with known dynamics. This work extends the state-of-the-art to continuous spaces environments and unknown dynamics. We show that the solution to a BMDP is a fixed point of a novel Budgeted Bellman Optimality operator. This observation allows us to introduce natural extensions of Deep Reinforcement Learning algorithms to address large-scale BMDPs. We validate our approach on two simulated applications: spoken dialogue and autonomous driving\footnote{Videos and code are available at \url{https://budgeted-rl.github.io/}%{this https URL}
+    %as required by the \href{https://docs.google.com/document/d/1SBCfisdLU2A_vb7K7wI8oRBin8ZA4cA1BbasqfQr5m0/edit}{Code Submission Policy}
+    .}.
 \end{abstract}
 
 \section{Introduction}
@@ -156,7 +158,7 @@ Our first contribution is to re-frame the original BMDP formulation in the conte
 
 \section{Budgeted Dynamic Programming}
 \label{sec:bdp}
- We work in the space of budgeted policies, where $\pi$ both depends on $\beta$ and also outputs a next budget $\beta_a$. Hence, the budget $\beta$ is neither fixed nor constant as in the CMDP setting but instead evolves as part of the dynamics.
+ We work in the space of budgeted policies, where a policy $\pi$ both depends on the current budget $\beta$ and also outputs a next budget $\beta_a$. Hence, the budget $\beta$ is neither fixed nor constant as in the CMDP setting but instead evolves as part of the dynamics.
 
 We cast the BMDP problem as a multi-objective MDP problem \citep{Roijers2013ASO} by considering \emph{augmented} state and action spaces $\ocS = \cS\times \cB$ and $\ocA= \cA\times \cB$, and equip them with the augmented dynamics $\ov{P}\in \cM(\ocS)^{\ocS \times \ocA}$ defined as:
     \begin{equation}
@@ -250,7 +252,7 @@ In classical Reinforcement Learning, the greedy policy takes a simple form $\pi_
 
 \begin{proposition}[Optimality of the greedy policy]
 \label{prop:greedy_optimal}
-The greedy policy $\pi_\text{greedy}(\cdot~; Q^*)$ is \emph{uniformly} optimal: for all $\os\in\ocS$, $\pi_\text{greedy}(\cdot~; Q^*)\in\Pi^*(\os)$. In particular, $V^{\pi_\text{greedy}(\cdot; Q^*)} = V^*$ and $Q^{\pi_\text{greedy}(\cdot; Q^*)}= Q^*$.
+The greedy policy $\pi_\text{greedy}(\cdot~; Q^*)$ is \emph{uniformly} optimal: $\forall\os\in\ocS$, $\pi_\text{greedy}(\cdot~; Q^*)\in\Pi^*(\os)$. In particular, $V^{\pi_\text{greedy}(\cdot; Q^*)} = V^*$ and $Q^{\pi_\text{greedy}(\cdot; Q^*)}= Q^*$.
 \end{proposition}
 
 \paragraph{Budgeted Value Iteration}
@@ -266,12 +268,18 @@ Unfortunately, as $\cT$ is not a contraction, we can guarantee neither the conve
 
 \begin{theorem}[Contractivity of $\cT$ on smooth $Q$-functions]
 \label{rmk:contractivity-smooth}
-The operator $\cT$ is a contraction when restricted to the subset $\cL_\gamma$ of $Q$-functions such that "$Q_r$ is $L$-Lipschitz with respect to $Q_c$", with $L<\frac{1}{\gamma}-1$. %We lengthily discuss some intuition on why that should be the case in \Cref{proof:contraction-with-smooth}.
+The operator $\cT$ is a contraction when restricted to the subset $\cL_\gamma$ of $Q$-functions such that "$Q_r$ is Lipschitz with respect to $Q_c$":
+\begin{equation}
+    \cL_\gamma = \left\{\begin{array}{cc}
+         Q\in(\Real^2)^{\ocS\ocA}\text{ s.t. }\exists L<\frac{1}{\gamma}-1: \forall \os\in\ocS,\oa_1,\oa_2\in\ocA,   \\
+         |Q_r(\os,\oa_1) - Q_r(\os,\oa_2)| \leq L|Q_c(\os,\oa_1) - Q_c(\os,\oa_2)|
+    \end{array}\right\}
+\end{equation}
 \end{theorem}
 
-\begin{remark}
-Because of the budget dynamics $\beta' = \beta_a$ in \eqref{eq:dynamics}, we can see in \eqref{eq:bellman_expectation} that for all $\os=(s, \beta)$ and $\oa=(a, \beta_a)$, $Q^\pi(\os, \oa)$ only depends on $s, a, \beta_a$ and not on $\beta$. We will slightly abuse notations and sometimes denote in the following $Q^\pi(s, a, \beta_a) \eqdef Q^\pi(\os, \oa)$.
-\end{remark}
+Thus, we expect that \Cref{algo:bvi} is likely to converge when $Q^*$ is smooth, but could diverge if the slope of $Q^*$ is too high.  $L^2$-regularisation can be used to encourage smoothness and mitigate risk of divergence.
+
+
 
 \section{Budgeted Reinforcement Learning}
 \label{sec:brl}
@@ -425,16 +433,15 @@ The task consists in driving as fast as possible, which is modelled by a reward 
 \label{subsec:results}
 In the following figures, each patch represents the mean and 95\% confidence interval over $N_{\text{seeds}}$ seeds of the means of $(G_r^\pi,G_c^\pi)$ over $N_\text{trajs}$ trajectories. That way, we display the variation related to learning (and batches) rather than the variation in the execution of the policies.
 
-We first bring to light the role of risk-sensitive exploration in the \text{corridors} environment: \Cref{fig:exploration} shows the set of trajectories collected by each exploration strategy\footnote{Animations are available at \href{https://budgeted-rl.github.io/\#risk-sensitive-exploration}{this https URL}}, 
-%in \Cref{subsec:exploration-examples}}
-and the resulting performance of a budgeted policy trained on each batch. The trajectories (orange) in the risk-neutral batch are concentrated along the risky corridor (red) and ignore the safe corridor (green), which results in bad performances in the low-risk regime. Conversely, trajectories in the risk-sensitive batch (blue) are well distributed among both corridors and the corresponding budgeted policy achieves good performance across the whole spectrum of risk budgets.
+We first bring to light the role of risk-sensitive exploration in the \text{corridors} environment: \Cref{fig:exploration} shows the set of trajectories collected by each exploration strategy.
+and the resulting performance of a budgeted policy trained on each batch. The trajectories (orange) in the risk-neutral batch are concentrated along the risky corridor (right) and ignore the safe corridor (left), which results in bad performances in the low-risk regime. Conversely, trajectories in the risk-sensitive batch (blue) are well distributed among both corridors and the corresponding budgeted policy achieves good performance across the whole spectrum of risk budgets.
 
 \begin{figure}[tp]
     \centering
-    \includegraphics[width=0.23\textwidth]{source/img/test.pdf}
+    \includegraphics[width=0.49\textwidth]{source/img/corridors_densities.pdf}
     %\includegraphics[width=0.23\textwidth]{source/img/risk-sensitive.png}
-    \includegraphics[page=1, width=0.45\textwidth]{source/img/corridors}
-    \caption{Trajectories (left) and performances (right) of two exploration strategies in the \texttt{corridors} environment. }
+    \includegraphics[page=1, width=0.49\textwidth]{source/img/corridors}
+    \caption{Density of explored states (left) and corresponding policy performances (right) of two exploration strategies in the {corridors} environment. }
     \label{fig:exploration}
 \end{figure}
 
@@ -450,8 +457,9 @@ and the resulting performance of a budgeted policy trained on each batch. The tr
 
 In a second experiment displayed in \Cref{fig:results}, we compare the performance of \FTQl to that of \BFTQ in the dialogue and autonomous driving tasks. For each algorithm, we plot the reward-cost trade-off curve. In both cases, \BFTQ performs almost as well as \FTQl despite only requiring a single model. All budgets are well-respected on \text{slot-filling}, but on \text{highway-env} we can observe an underestimation of $Q_c$, since e.g. $\expectedvalue[G_c|\beta=0] \simeq 0.1 $. This underestimation can be a consequence of two approximations: the use of the sampling operator $\hat{\cT}$ instead of the true population operator $\cT$, and the use of the neural network function approximation $Q_\theta$ instead of $Q$. 
 % This is probably due to \text{highway-env} being actually infeasible for $\beta=0$, since we noticed that about $8\%$ of bad initialisations occur with the front vehicle driving slower than the minimum velocity of the controlled vehicle, leading to either a front collision or a forced change to the opposite lane, both yielding costs.
-Still, \BFTQ provides a better control on the expected cost of the policy, than \FTQl. In addition, \BFTQ behaves more consistently than \FTQl overall, as shown by its lower extra-seed variance. Examples of policy execution can be found at \href{https://budgeted-rl.github.io/\#optimal-budgeted-policies}{this https URL}.
-%in \Cref{sec:bftq-executions}.
+Still, \BFTQ provides a better control on the expected cost of the policy, than \FTQl. In addition, \BFTQ behaves more consistently than \FTQl overall, as shown by its lower extra-seed variance.
+
+Additional material such as videos of policy executions is provided in \Cref{sec:exp-supp}.
 
 \section{Discussion}
 \label{subsec:discussions}
