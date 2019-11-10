@@ -29,16 +29,19 @@ clean () {
     rm *.glg-abr 2> /dev/null
     rm *.glo-abr 2> /dev/null
     rm *.gls-abr 2> /dev/null
+    rm *.nav 2> /dev/null
+    rm *.out 2> /dev/null
+    rm *.snm 2> /dev/null
 }
 
 clean
 
-rm main.pdf 2> /dev/null
+rm $1.pdf 2> /dev/null
 
 #sed -i 's/\\\usepackage{.*}//g' sources/*/*.tex
 
 
-texfot pdflatex main.tex
+texfot pdflatex $1.tex
 #texfot pdflatex main1.tex
 #| grep "Output written on"
 #echo "-------------------------------------------------------"

@@ -1,0 +1,555 @@
+\documentclass{beamer}
+\usepackage{comment}
+% wow this is a hack that lets you have more definitions in latex.
+% see http://www.tex.ac.uk/cgi-bin/texfaq2html?label=noroom
+\usepackage{natbib}
+\usepackage{etex}
+\usepackage{pgffor}
+\usepackage[utf8]{inputenc}
+%\usepackage[cyr]{aeguill}
+\reserveinserts{28}
+\usepackage{tikz}
+\usepackage[customcolors]{hf-tikz}
+%\usepackage[utf8]{inputenc}
+%\mode<presentation>{\usetheme{Caltech}}
+
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{multimedia}
+\usepackage{color}
+\usepackage{esint}
+\usepackage{stmaryrd}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage[squaren]{SIunits}
+\usepackage{graphicx}
+\usepackage{subfig}
+\usepackage{diagbox}
+\usepackage{pdfpages}
+\usepackage{dsfont}
+\usepackage{xcolor}
+\usepackage{soul}
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+
+
+\newcommand{\mathcolorbox}[2]{\colorbox{#1}{$\displaystyle #2$}}
+
+\input{mathdef}
+
+\setbeamertemplate{footline}{%
+\hfill%
+\usebeamercolor[fg]{page number in head/foot}%
+\usebeamerfont{page number in head/foot}%
+\insertframenumber%
+%\,/\,\inserttotalframenumber
+\kern1em\vskip2pt%
+}
+
+\beamertemplatenavigationsymbolsempty
+
+\author[shortname]{
+Nicolas Carrara \inst{3} \and
+Edouard Leurent\inst{3,5} \and
+Tanguy Urvoy \inst{1} \and
+Romain Laroche \inst{2} \and
+Odalric-Ambrym Maillard \inst{3} \and
+Olivier Pietquin \inst{3,4}}
+\institute[shortinst]{\inst{1} Orange Labs\and %
+\inst{2} Microsoft Montr\'eal. \and
+\inst{3} Univ. Lille, CNRS, Centrale Lille, INRIA UMR 9189 - CRIStAL\and
+\inst{4} Google Research, Brain Team, Paris\and
+\inst{5} Renault}
+
+\title[]{Budgeted Reinforcement Learning in Continuous State Space}
+\date{November the 14th, 2019.}
+\begin{document}
+    \begin{frame}
+        \maketitle
+        \centering
+    \end{frame}
+
+    \begin{frame}{\textbf{Introduction} | Context}
+        \begin{itemize}
+            \item The \textbf{autonomous driving} problem is hard to solve. Why ?
+            \begin{itemize}
+                \item we need to model the physic laws
+                \item but also and the human behaviors (negociation/randomness).
+            \end{itemize}
+            \item \textbf{Reinforcement Learning} is a solution, but
+            \begin{itemize}
+                \item It only works with one reward signal.
+                \item Reward is hard to design, need a lot of tuning
+                \item It usually implies too conversatives or too risky behaviors.
+            \end{itemize}
+
+            \item \textbf{Robust Control} faces the same problem.
+            \begin{itemize}
+                \item Propagating the incertitudes implies too safe behaviors.
+                \item Models used have to be simple and it can't apply in sim2real.
+            \end{itemize}
+            \item The solution: \textbf{Safe Reinforcement Learning}
+            \begin{itemize}
+                \item Control the risk and the reward signal.
+                \item Keeps the objectives simple.
+                \item Add a new DOF: easier to design a more complexe reward.
+            \end{itemize}
+        \end{itemize}
+    \end{frame}
+
+
+    \begin{frame}{\textbf{Introduction} | Problem}
+        \begin{block}{Problem}
+            Given past trajectories, find a way to:
+            \begin{itemize}
+                \pause\item maximize a signal;
+                \pause\item limit the frequency of catastrophic events given some budget;
+                \pause\item being able to change the budget in real time.
+            \end{itemize}
+
+        \end{block}
+
+        \pause
+        \begin{block}{Solution}
+            \begin{itemize}
+                \item This problem can be cast as a Budgeted Markov Decision Process.
+            \end{itemize}
+        \end{block}
+    \end{frame}
+
+
+    \begin{frame}{Setting}
+        \begin{block}{Markov Decision Process}
+            We define a MDP as a tuple $(\cS, \cA, P, R_r, \gamma)$ where:
+            \begin{itemize}
+                \pause\item  $\cS$ is the state space, $\cA$ the action space,
+                \pause\item $R_r\in\Real^{\cS \times \cA}$ the rewards,
+                \pause\item $P\in \cM(\cS)^{\cS \times \cA}$ the dynamics, %  where $\cM(\mathcal{X})$ denotes the probability measures over a set $\mathcal{X}$
+                \pause\item and $\gamma$ the discounted factor.
+            \end{itemize}
+        \end{block}
+        \pause
+        \begin{block}{Objective}
+            \begin{itemize}
+                \pause\item $G_r^\pi = \sum_{t=0}^\infty \gamma^t R_r(s_t, a_t)$ the $\gamma$-discounted return of rewards.
+                \pause\item Find $\pi^*$ s.t $\forall s\in\cS$:
+                \begin{equation}
+                    \label{eq:mdp}
+                    \begin{array}{lcr}
+                        \displaystyle \pi^* \in \argmax_{\pi\in\cM(\cA)^\cS} \expectedvalue[G_r^\pi | s_0=s]
+                    \end{array}
+                \end{equation}
+
+            \end{itemize}
+        \end{block}
+    \end{frame}
+
+    \begin{frame}{Setting}
+        \begin{block}{\textcolor{red}{Constrained} Markov Decision Process}
+            We define a \textcolor{red}{CMDP} as a tuple $(\cS, \cA, P, R_r,\textcolor{red}{R_c}, \gamma,\textcolor{red}{\beta})$ where:
+            \begin{itemize}
+                \item  $\cS$ is the state space, $\cA$ the action space,
+                \item $R_r\in\Real^{\cS \times \cA}$ the rewards, and $\textcolor{red}{R_c\in\Real^{\cS \times \cA}}$ the costs
+                \item $P\in \cM(\cS)^{\cS \times \cA}$ the dynamics, %  where $\cM(\mathcal{X})$ denotes the probability measures over a set $\mathcal{X}$
+                \item $\gamma$ the discounted factor, and $\textcolor{red}{\beta}$ the budget.
+            \end{itemize}
+        \end{block}
+
+        \begin{block}{Objective}
+            \begin{itemize}
+                \item $G_r^\pi = \sum_{t=0}^\infty \gamma^t R_r(s_t, a_t)$ the $\gamma$-discounted return of rewards.
+                \item \textcolor{red}{ $G_c^\pi = \sum_{t=0}^\infty \gamma^t R_c(s_t, a_t)$ the $\gamma$-discounted return of costs.}
+                \item Find $\pi^*$ s.t $\forall s\in\cS$:
+                \begin{equation}
+                    \label{eq:cmdp}
+                    \begin{array}{lcr}
+                        \displaystyle \pi^* \in \argmax_{\pi\in\cM(\cA)^\cS} \expectedvalue[G_r^\pi | s_0=s] \\
+                        \text{ s.t. }  \textcolor{red}{\expectedvalue[G_c^\pi | s_0=s] \leq \beta}
+                    \end{array}
+                \end{equation}
+            \end{itemize}
+        \end{block}
+    \end{frame}
+
+    \begin{frame}{Setting}
+        \begin{block}{\textcolor{red}{Budgeted} Markov Decision Process}
+            We define a \textcolor{red}{BMDP} as a tuple $(\cS, \cA, P, R_r,{R_c}, \gamma,\textcolor{red}{\cB})$ where:
+            \begin{itemize}
+                \item  $\cS$ is the state space, $\cA$ the action space,
+                \item $R_r\in\Real^{\cS \times \cA}$ the rewards, and $R_c\in\Real^{\cS \times \cA}$ the costs
+                \item $P\in \cM(\cS)^{\cS \times \cA}$ the dynamics, %  where $\cM(\mathcal{X})$ denotes the probability measures over a set $\mathcal{X}$
+                \item $\gamma$ the discounted factor, and $\textcolor{red}{\cB}$ the budget space.
+            \end{itemize}
+        \end{block}
+
+        \begin{block}{Objective}
+            \begin{itemize}
+                \item $G_r^\pi = \sum_{t=0}^\infty \gamma^t R_r(s_t, a_t)$ the $\gamma$-discounted return of rewards.
+                \item  $G_c^\pi = \sum_{t=0}^\infty \gamma^t R_c(s_t, a_t)$ the $\gamma$-discounted return of costs.
+                \item Find $\pi^*$ s.t $\forall (s,\textcolor{red}{\beta})\in\cS\times\textcolor{red}{\cB}$:
+                \begin{equation}
+                    \label{eq:bmdp}
+                    \begin{array}{lcr}
+                        \displaystyle \pi^* \in \argmax_{\pi\in\cM(\cA\times\textcolor{red}{\cB})^{\cS\times\textcolor{red}{\cB}}} \expectedvalue[G_r^\pi | s_0=s,\textcolor{red}{\beta_0=\beta}] \\
+                        \text{ s.t. }  \expectedvalue[G_c^\pi | s_0=s,\textcolor{red}{\beta_0=\beta}] \leq \beta
+                    \end{array}
+                \end{equation}
+            \end{itemize}
+        \end{block}
+    \end{frame}
+
+    \foreach \n in {0,1,2,3,4}{
+    \begin{frame}{The Dynamic Programming solution: intuition}
+        \begin{figure}
+            \centering
+            %%\vspace{-1.5em}
+            \includegraphics[scale=0.6,page=1]{img/a\n}
+        \end{figure}
+    \end{frame}
+    }
+
+    \begin{frame}{Augmented Settings}
+
+        \textbf{Budgeted policies} $\pi$
+        \begin{itemize}
+            \pause\item Take a budget $\beta$ as an additional input
+            \pause\item Output a next budget $\beta'$
+            \pause\item $ \pi:\underbrace{(s,\beta)}_{\os} \rightarrow \underbrace{(a,\beta')}_{\oa}$
+        \end{itemize}
+
+        \textbf{Domain}
+        \begin{itemize}
+            \pause\item States $\ocS = \cS\times\cB$.
+            \pause\item Actions $\ocA = \cA\times\cB$.
+            \pause\item Dynamics $\ov{P}$ %$\ov{P}\left((s',\beta') \condbar (s,\beta), (a, \beta_a)\right) \eqdef P(s'|s, a)\delta(\beta' - \beta_a)$.
+        \end{itemize}
+        \textbf{2D signals}
+        \begin{enumerate}
+            \pause\item Rewards $R = (R_r, R_c)$
+            \pause\item Returns $G^\pi = (G_r^\pi, G_c^\pi)$
+            \pause\item $V^\pi(\os) = (V_r^\pi, V_c^\pi) \eqdef \expectedvalue\left[ G^\pi \condbar \ov{s_0} = \os\right]$
+            \pause\item $Q^\pi(\os, \oa)= (Q_r^\pi, Q_c^\pi) \eqdef \expectedvalue\left[ G^\pi \condbar \ov{s_0} = \os, \ov{a_0} = \oa\right]$
+        \end{enumerate}
+
+        \pause\textbf{Policy Evaluation}\\
+
+        The Bellman Expectation equations% [\cite{Bellman}]
+        are preserved, and the Bellman Expectation Operator $\cT^\pi$ is a $\gamma$-contraction.
+    \end{frame}
+
+    \begin{frame}{Augmented Optimality}
+        \begin{definition}
+            In that order, we want to:
+            \begin{enumerate}
+                \item[(i)] \pause\colorbox{red}{Respect the budget $\beta$}:
+                \begin{equation*}
+                    \Pi_a(\os) \eqdef \{\pi\in\Pi: V_c^\pi(s, \beta) \mathcolorbox{red}{\leq \beta}\}
+                \end{equation*}
+                \item[(ii)] \pause\colorbox{green}{Maximise the rewards}:
+                \begin{equation*}
+                    V_r^*(\os) \eqdef \mathcolorbox{green}{\max}_{\pi\in\Pi_a(\os)}  V_r^\pi(\os) \qquad\quad \Pi_r(\os) \eqdef \mathcolorbox{green}{\argmax}_{\pi\in\Pi_a(\os)}  V_r^\pi(\os)
+                \end{equation*}
+                \item[(iii)] \pause\colorbox{yellow}{Minimise the costs}:
+                \begin{equation*}
+                    V_c^*(\os) \eqdef \mathcolorbox{yellow}{\min}_{\pi\in\Pi_r(\os)}  V_c^\pi(\os), \qquad\quad \Pi^*(\os) \eqdef \mathcolorbox{yellow}{\argmin}_{\pi\in\Pi_r(\os)}  V_c^\pi(\os)
+                \end{equation*}
+            \end{enumerate}
+
+            \pause We define the budgeted action-value function $Q^*$ similarly
+        \end{definition}
+    \end{frame}
+
+    \begin{frame}{Budgeted Bellman Optimality Equation}
+        \begin{theorem}[Budgeted Bellman Optimality Equation]
+            $Q^*$ verifies the following equation:
+            \begin{align*}
+                Q^{*}(\os, \oa) &= \cT Q^{*}(\os, \oa)\\
+                &\eqdef R(\os, \oa) + \gamma \sum_{\os'\in\ocS} \ov{P}(\ov{s'} | \os, \oa)\sum_{\ov{a'}\in \ocA} \pi_\text{greedy}(\ov{a'}|\ov{s'}; Q^*) Q^{*}(\ov{s'}, \ov{a'}),
+            \end{align*}
+            where the greedy policy $\pi_\text{greedy}$ is defined by:
+            \begin{align*}
+                \pi_\text{greedy}(\oa|\os; Q) \in &\mathcolorbox{yellow}{\argmin}_{\rho\in\Pi_r^Q} \expectedvalueover{\oa\sim\rho}Q_c(\os, \oa), \\
+                \text{where }\quad \Pi_r^Q \eqdef &\mathcolorbox{green}{\argmax}_{\rho\in\cM(\ocA)} \expectedvalueover{\oa\sim\rho} Q_r(\os, \oa) \\
+                & \text{ s.t. }  \expectedvalueover{\oa\sim\rho} Q_c(\os, \oa) \mathcolorbox{red}{\leq \beta}
+            \end{align*}
+        \end{theorem}
+    \end{frame}
+
+    \begin{frame}{Optimality of the policy}
+        \begin{proposition}[Optimality of the policy]
+            $\pi_\text{greedy}(\cdot~; Q^*)$ is \colorbox{yellow}{simultaneously optimal} in all states $\os\in\ocS$: $$\pi_\text{greedy}(\cdot~; Q^*)\in \mathcolorbox{yellow}{\Pi^*(\os)}$$
+
+            In particular, $V^{\pi_\text{greedy}(\cdot; Q^*)} = V^*$ and $Q^{\pi_\text{greedy}(\cdot; Q^*)}= Q^*$.
+        \end{proposition}
+
+    \end{frame}
+
+    \begin{frame}{Solving the untractable program}
+
+        \begin{proposition}[$\pi_{\text{greedy}}=\pi_\text{hull}$]
+            $\pi_\text{greedy}$ can be computed explicitly, as a mixture of two points that lie on the convex hull of $Q$.
+        \end{proposition}
+
+
+    \end{frame}
+
+    \foreach \n in {0,1,2,3,4}{
+    \begin{frame}{Solving the non-linear programming problem: intuition}
+        \begin{figure}
+            \centering
+            %%\vspace{-1.5em}
+            \includegraphics[scale=1.0,page=1]{img/b\n}
+        \end{figure}
+    \end{frame}
+    }
+
+    \begin{frame}{Not a contraction}
+        \begin{theorem}[Non-Contractivity]
+            For any BMDP ($\cS,\cA,P,R_r,R_c,\gamma$) with $|\cA| \geq 2$, $\cT$ is not a contraction.
+            $$\forall\epsilon>0, \exists Q^1,Q^2\in(\Real^2)^{\ocS\ocA}:\|\cT Q^1-\cT Q^2\|_\infty \geq \frac{1}{\epsilon}\|Q^1-Q^2\|_\infty$$
+        \end{theorem}
+    \end{frame}
+
+    \foreach \n in {0,1,2}{
+    \begin{frame}{Not a contraction: intuition}
+        \begin{figure}
+            \centering
+            %%\vspace{-1.5em}
+            \includegraphics[scale=0.9,page=1]{img/d\n}
+        \end{figure}
+    \end{frame}
+    }
+
+    \begin{frame}{Contractivity on smooth $Q$-functions}
+        \begin{Theorem}[Contractivity $\cL_\gamma$]
+            $\cT$ is a contraction when restricted to the subset $\cL_\gamma$ of $Q$-functions such that "$Q_r$ is $L$-Lipschitz with respect to $Q_c$", with $L<\frac{1}{\gamma}-1$.
+        \end{Theorem}
+
+    \end{frame}
+
+    \begin{frame}{Budgeted Dynamic Programming}
+        \begin{algorithm}[H]
+            \DontPrintSemicolon
+            \KwData{$P, R_r, R_c$}
+            \KwResult{$Q^*$}
+            $Q_{0} \leftarrow 0$\;
+            \Repeat{convergence}{
+            $Q_{k+1} \leftarrow \cT Q_k$\;
+            }
+            \caption{Budgeted Value-Iteration}
+        \end{algorithm}
+    \end{frame}
+
+
+    \begin{frame}{Budgeted Reinforcement Learning}
+
+        We address several limitations of Budgeted Value-Iteration
+
+        \begin{enumerate}
+            \pause\item If the $P$, $R_r$ and $R_c$ are unknown:
+            \begin{itemize}
+                \pause\item Work with a {batch} of samples $\cD=\{(\os_i,\oa_i,r_i,\os_i'\}_{i\in [0,N]}$
+                \pause\item Replace $\cT$ with a sampling operator $\hat{\cT}$:
+                \begin{equation*}
+                    \hat{\cT} Q(\os_i, \oa_i, r_i, \os'_i) \eqdef r_i + \gamma \sum_{\ov{a'_i}\in \cA_i} \pi_\text{greedy}(\ov{a'_i}|\ov{s'_i}; Q) Q(\ov{s'_i}, \ov{a'_i}).
+                \end{equation*}
+            \end{itemize}
+            \pause\item If $\cS$ is continuous:
+            \begin{itemize}
+                \pause\item Employ function approximation $Q_\theta$, and minimise a regression loss
+                $$\cL(Q_\theta, Q_\text{target};\cD) = \sum_{\cD} ||Q_\theta(\os, \oa) - Q_\text{target}(\os, \oa, r, \os')||_2^2$$
+            \end{itemize}
+
+        \end{enumerate}
+
+    \end{frame}
+
+    \begin{frame}{Budgeted Fitted-Q}
+        \begin{algorithm}[H]
+            \DontPrintSemicolon
+            \KwData{$\cD$}
+            \KwResult{$Q^*$}
+            $Q_{\theta_0} \leftarrow 0$\;
+            \Repeat{convergence}{
+            $\theta_{k+1} \leftarrow \argmin_\theta \cL(Q_\theta, \hat{\cT} Q_{\theta_{k}}; \cD)$\;
+            }
+            \caption{Budgeted Fitted-Q Iteration}
+        \end{algorithm}
+    \end{frame}
+
+    \begin{frame}{More scaling}
+
+        \begin{itemize}
+            \pause\item CPU parallel computing of the targets $\sum_{\ov{a'_i}\in \cA_i} \pi_\text{greedy}(\ov{a'_i}|\ov{s'_i}; Q) Q(\ov{s'_i}, \ov{a'_i})\ \forall i$
+            \pause\item Same for samples generation.
+            \pause\item Neural Network as function approximator:
+        \end{itemize}
+
+        \begin{center}
+            \resizebox{.7\textwidth}{!}{%
+            \input{architecture.tex}
+            }
+        \end{center}
+
+    \end{frame}
+
+
+
+
+    \begin{frame}{Experiments: performances of BFTQ}
+        \begin{itemize}
+            \item Baseline: $\lambda$-FTQ, Lagrangian relaxation
+            \begin{itemize}
+                \item $R_r(s,a) \leftarrow R_r(s,a) - \lambda R_c(s,a) \text{ where } \lambda \geq 0$
+            \end{itemize}.
+            \item Applications:
+            \begin{itemize}
+                \item dialogue systems
+                \item autonomous driving
+            \end{itemize}
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}{Experiments: dialogue systems}
+        \begin{itemize}
+            \item A slot-filling problem: the agent (the dialogue system) fills a form by asking the user each slot.
+            \pause\item Two ways to deal with recognition errors:
+            \begin{itemize}
+                \item ask to repeat with voice (safe/slow);
+                \item Ask to repeat with numeric pad. (unsafe/fast).
+            \end{itemize}
+        \end{itemize}
+
+    \end{frame}
+    \begin{frame}{Experiments: dialogue systems}
+        \begin{center}
+            \includegraphics[width=\textwidth]{img/slot-filling.pdf}
+        \end{center}
+    \end{frame}
+
+
+    \begin{frame}{Experiments: autonomous driving}
+        \begin{itemize}
+            \item the agent (the car) is on a two-way road with a car in front of it, two solutions:
+            \begin{itemize}
+                \item it can stay behind (safe/slow);
+                \item it can overtake (unsafe/fast).
+            \end{itemize}
+        \end{itemize}
+    \end{frame}
+    \begin{frame}{Experiments: autonomous driving}
+        \begin{center}
+            \includegraphics[width=\textwidth]{img/highway.pdf}
+        \end{center}
+    \end{frame}
+
+    \begin{frame}{Experiments: autonomous driving}
+        \href{../../assets/highway-env.html}{\beamergotobutton{BFTQ on the highway environment}}
+
+    \end{frame}
+
+    \begin{frame}{Risk-sensitive exploration}
+
+        How to collect the batch $\cD$?
+
+        \begin{itemize}
+            \item We propose an $\epsilon$-greedy exploration procedure
+            \begin{itemize}
+                \pause\item Sample an initial budget $\beta_0$
+                \pause\item At each step, where $\os=(s,\beta)$ only explore feasible budgets:
+                \pause\begin{align*}
+                          &\oa = (a, \beta_a)\sim\mathcal{U}(\Delta_{\cA\cB})\\
+                          &\text{ where }  \Delta \text{ is such that }\probability{a, \beta_a|s, \beta} \text{verifies} \expectedvalue[\beta_a]\leq\beta
+                \end{align*}
+            \end{itemize}
+        \end{itemize}
+
+
+    \end{frame}
+
+    \begin{frame}{Experiments: risk-sensitive exploration}
+
+        \begin{itemize}
+            \item Validate the risk-sensitive exploration procedure on the corridor environment
+            \pause\item Learn 2 BFTQ policies with respectively:
+            \begin{itemize}
+                \item A batch generated by a risk-neutral $\epsilon$-greedy procedure
+                \item A batch generated by a risk-sensitive $\epsilon$-greedy procedure
+            \end{itemize}
+        \end{itemize}
+    \end{frame}
+
+
+    \begin{frame}{Experiments: corridors}
+
+        \begin{columns}
+            \begin{column}{0.7\textwidth}
+                \begin{itemize}
+                    \item 2 corridors:
+                    \begin{itemize}
+                        \item high costs/high rewards around the starting state
+                        \item no costs/low rewards around the starting state
+                    \end{itemize}
+                    \item The outermost cells are the ones yielding the most reward
+                \end{itemize}
+            \end{column}
+            \begin{column}{0.3\textwidth}  %%<--- here
+                \begin{center}
+                    \includegraphics[width=\textwidth]{img/env-corridor.pdf}
+                \end{center}
+            \end{column}
+        \end{columns}
+
+    \end{frame}
+
+
+    \begin{frame}{Experiments: corridors}
+
+        \begin{columns}
+            \begin{column}{0.7\textwidth}
+                \includegraphics[page=1, width=\textwidth]{img/corridors}
+            \end{column}
+            \begin{column}{0.3\textwidth}  %%<--- here
+                \begin{center}
+                    \includegraphics[width=\textwidth]{img/test.pdf}
+                \end{center}
+            \end{column}
+        \end{columns}
+    \end{frame}
+
+    %    \begin{frame}{Experiments: corridors}
+    %        \href{scaling-up-brl.github.io-master/corridors.html}{\beamergotobutton{Risk-sensitive vs Risk-Neutral on the corridors environment}}
+    %
+    %    \end{frame}
+
+
+    \begin{frame}{Summary}
+
+        \begin{enumerate}[+]
+            \pause\item<1-> Budgeted Bellman Optimality Operator.
+            \begin{itemize}
+                \pause\item Fixed point.
+                \pause\item Not a contraction but converging in practice.
+            \end{itemize}
+            \pause\item<2-> Scalable for RL in continuous state space.
+            \begin{itemize}
+                \pause\item Function approximation with Neural Network (dedicated architecture).
+                \pause\item Solving of the untractable program using convex hull.
+                \pause\item CPU parallel computing of the target.
+                \pause\item Risk-sensitive exploration procedure.
+            \end{itemize}
+
+            \pause\item<3-> Experiments on two applications.
+            \begin{itemize}
+                \pause\item BFTQ reaches similar performances as Lagrangian relaxation,
+                \pause\item with no need for calibration,
+                \pause\item and less variance.
+            \end{itemize}
+        \end{enumerate}
+
+    \end{frame}
+
+\end{document}
+
