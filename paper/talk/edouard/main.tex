@@ -71,12 +71,12 @@ Examples?
 	\end{multicols}
 \end{block}
 \begin{block}{Objective}
-Find $\pi^*$ such that $\forall s\in\cS$:
+Maximise rewards \only<2>{\alert{while keeping costs under a fixed budget}}
 	\begin{equation*}
-	\begin{array}{lcr}
-	\displaystyle \pi^* \in \argmax_{\pi\in\cM(\cA)^{\cS}} \expectedvalue\left[\sum_{t=0}^\infty \gamma^t \Rr(s_t, a_t) \condbar s_0=s \right]\\
+	\begin{array}{rl}
+	 \max_{\pi\in\cM(\cA)^{\cS}} &\expectedvalue\left[\sum_{t=0}^\infty \gamma^t \Rr(s_t, a_t) \condbar s_0=s \right]\\
 	\visible<2>{
-	\text{ s.t. }  \displaystyle \alert<2>{\expectedvalue\left[\sum_{t=0}^\infty \gamma^t R_c(s_t, a_t) \condbar s_0=s\right] \leq \beta}}
+	\text{ s.t. }  \displaystyle &\alert<2>{\expectedvalue\left[\sum_{t=0}^\infty \gamma^t R_c(s_t, a_t) \condbar s_0=s\right] \leq \beta}}
 	\end{array}
 	\end{equation*}
 \end{block}
@@ -95,13 +95,13 @@ Find $\pi^*$ such that $\forall s\in\cS$:
 	\end{multicols}
 \end{block}
 \begin{block}{Objective}
-	Find $\pi^*$ such that $\forall\alert{(s,\beta)\in\cS\times\cB}$:
-	\begin{equation*}
-	\begin{array}{lcr}
-	\displaystyle \pi^* \in \argmax_{\pi\in\cM(\cA \alert{\times \cB})^{\cS\alert{\times \cB}}} \expectedvalue\left[\sum_{t=0}^\infty \gamma^t R_r(s_t, a_t) \condbar s_0=s, \alert{\beta_0 = \beta}\right]\\
-		\text{ s.t. }  \displaystyle \expectedvalue\left[\sum_{t=0}^\infty \gamma^t \Rc(s_t, a_t) \condbar s_0=s, \alert{\beta_0 = \beta}\right] \leq \beta
+Maximise rewards while keeping costs under an \alert{adjustable} budget. $\alert{\forall \beta\in\cB},$
+	\begin{align*}
+	\begin{array}{rl}
+	 \max_{\pi\in\cM(\cA \alert{\times \cB})^{\cS\alert{\times \cB}}} &\expectedvalue\left[\sum_{t=0}^\infty \gamma^t \Rr(s_t, a_t) \condbar s_0=s, \alert{\beta_0 = \beta}\right]\\
+		\text{ s.t. } &\expectedvalue\left[\sum_{t=0}^\infty \gamma^t \Rc(s_t, a_t) \condbar s_0=s, \alert{\beta_0 = \beta}\right] \leq \beta
 	\end{array}
-	\end{equation*}
+	\end{align*}
 \end{block}
 \end{frame}
 

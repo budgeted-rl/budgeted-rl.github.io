@@ -1,4 +1,0 @@
-\beamer@sectionintoc {1}{Setting}{3}{0}{1}
-\beamer@sectionintoc {2}{Budgeted Dynamic Programming}{10}{0}{2}
-\beamer@sectionintoc {3}{Budgeted Reinforcement Learning}{29}{0}{3}
-\beamer@sectionintoc {4}{Experiments}{38}{0}{4}
