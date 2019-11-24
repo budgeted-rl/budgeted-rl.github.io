@@ -16,6 +16,9 @@
 \newcommand{\ocS}{\ov{\cS}}
 \newcommand{\ocA}{\ov{\cA}}
 
+\newcommand{\Rr}{{\green R_r}}
+\newcommand{\Rc}{{\red R_c}}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Aesthetics               %
 % over-underline, hat, bold%
@@ -24,17 +27,10 @@
 \newcommand{\eps}{\varepsilon}
 \newcommand{\vareps}{\varepsilon}
 \renewcommand{\epsilon}{\varepsilon}
-%\renewcommand{\hat}{\widehat}
 \renewcommand{\tilde}{\widetilde}
 \renewcommand{\bar}{\overline}
-
 \newcommand*{\MyDef}{\mathrm{\tiny def}}
 \newcommand*{\eqdefU}{\ensuremath{\mathop{\overset{\MyDef}{=}}}}% Unscaled version
-\newcommand*{\eqdef}{\mathop{\overset{\MyDef}{\resizebox{\widthof{\eqdefU}}{\heightof{=}}{=}}}}
-
-
-\def\:#1{\protect \ifmmode {\mathbf{#1}} \else {\textbf{#1}} \fi}
-\newcommand{\CommaBin}{\mathbin{\raisebox{0.5ex}{,}}}
 
 \newcommand{\wt}[1]{\widetilde{#1}}
 \newcommand{\wh}[1]{\widehat{#1}}
@@ -140,6 +136,29 @@
 \DeclareMathOperator*{\argmin}{arg\,min} 
 \DeclareMathOperator*{\argmax}{arg\,max} 
 \DeclareMathOperator*{\cupdot}{\mathbin{\mathaccent\cdot\cup}}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\newcommand{\eqdef}{\buildrel \text{def}\over =}
+
+
+\usepackage{amsmath}
+\DeclareFontFamily{U}{mathb}{}
+\DeclareFontShape{U}{mathb}{m}{n}{
+	<-5.5> mathb5
+	<5.5-6.5> mathb6
+	<6.5-7.5> mathb7
+	<7.5-8.5> mathb8
+	<8.5-9.5> mathb9
+	<9.5-11.5> mathb10
+	<11.5-> mathb12
+}{}
+\DeclareSymbolFont{mathb}{U}{mathb}{m}{n}
+\DeclareMathSymbol{\ulsh}{3}{mathb}{"E8}
+\DeclareMathSymbol{\ursh}{3}{mathb}{"E9}
+\DeclareMathSymbol{\dlsh}{3}{mathb}{"EA}
+\DeclareMathSymbol{\drsh}{3}{mathb}{"EB}
+
+\newcommand{\xmark}{\ding{55}}%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Matrix operators         %
@@ -168,3 +187,11 @@
 \newcommand{\statespace}{\mathcal{X}}
 \newcommand{\funcspace}{\mathcal{F}}
 \newcommand{\dynaspace}{\mathcal{T}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Environments             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newtheorem{proposition}{Proposition}
+\newtheorem{assumption}{Assumption}
+\newtheorem{remark}{Remark}
+\newtheorem{property}{Property}
