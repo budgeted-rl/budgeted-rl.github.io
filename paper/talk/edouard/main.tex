@@ -54,12 +54,32 @@ No explicit control over the tradeoffs
 \end{alertblock}
 
 Examples?
-
-
 \end{frame}
 
+\begin{frame}{Examples}
+\begin{alertblock}{Dialogue systems}
+A slot-filling problem: the agent fills a form by asking the user each slot. It can either:
+\begin{itemize}
+	\item ask to answer using {\green voice} {\green (safe/slow)};
+	\item ask to answer with a {\red numeric pad} {\red (unsafe/fast)}.
+\end{itemize}
+\end{alertblock}
+
+\begin{alertblock}{Autonomous Driving}
+The agent is driving on a two-way road with a car in front of it,
+\begin{itemize}
+\item it can {\green stay behind} {\green (safe/slow)};
+\item it can {\red overtake} {\red (unsafe/fast)}.
+\end{itemize}
+\begin{center}
+\href{https://budgeted-rl.github.io/assets/highway-neutral.gif}{\includegraphics[width=0.5\linewidth]{img/highway_env}}
+\end{center}
+\end{alertblock}
+\end{frame}
+
+
 \begin{frame}{Constrained Reinforcement Learning}
-\begin{block}{\only<2>{Constrained} Markov Decision Process}
+\begin{alertblock}{\only<2>{Constrained} Markov Decision Process}
 	A\only<1>{n} \alert<2>{\only<2>{C}MDP} is a tuple $(\cS, \cA, P, \Rr, \only<2>{\alert<2>{R_c,}} \gamma \only<2>{\alert{, \beta}})$ with:
 	\begin{multicols}{2}
 			\begin{itemize}
@@ -69,7 +89,7 @@ Examples?
 			\item<2> \alert{Budget $\beta$}
 		\end{itemize}
 	\end{multicols}
-\end{block}
+\end{alertblock}
 \begin{block}{Objective}
 Maximise rewards \only<2>{\alert{while keeping costs under a fixed budget}}
 	\begin{equation*}
@@ -83,7 +103,7 @@ Maximise rewards \only<2>{\alert{while keeping costs under a fixed budget}}
 \end{frame}
 
 \begin{frame}{Budgeted Reinforcement Learning}
-\begin{block}{Budgeted Markov Decision Process}
+\begin{alertblock}{Budgeted Markov Decision Process}
 	A \alert{BMDP} is a tuple $(\cS, \cA, P, \Rr, \Rc, \gamma\alert{, \cB})$ with:
 	\begin{multicols}{2}
 		\begin{itemize}
@@ -93,7 +113,7 @@ Maximise rewards \only<2>{\alert{while keeping costs under a fixed budget}}
 			\item \alert{Budget space $\cB$}
 		\end{itemize}
 	\end{multicols}
-\end{block}
+\end{alertblock}
 \begin{block}{Objective}
 Maximise rewards while keeping costs under an \alert{adjustable} budget. $\alert{\forall \beta\in\cB},$
 	\begin{align*}
@@ -327,14 +347,20 @@ We address several limitations of Budgeted Value-Iteration
 \section{Experiments}
 \frame{\sectionpage}
 
-\begin{frame}{Performances}
-\begin{itemize}
-	\item Baseline: $\lambda$-FTQ, Lagrangian relaxation
+\begin{frame}{A baseline approximate solution}
+\begin{alertblock}{Lagrangian Relaxation}
+	Consider the dual problem so as to replace the hard constraint by a soft constraint penalised by a \alert{Lagrangian  multiplier $\lambda$}:
+	\begin{equation*}
+	\label{eq:lagrangian-relaxation}
+	\max_\pi \expectedvalue \sum_t {\green \gamma^t R_r(s,a)} - \alert{\lambda}{\red \gamma^t R_c(s,a)}
+	\end{equation*}
 	\begin{itemize}
-		\item $R_r(s,a) \leftarrow R_r(s,a) - \lambda R_c(s,a) \text{ where } \lambda \geq 0$
-	\end{itemize}.
-\end{itemize}
+		\item Train many policies $\pi_k$ with penalties $\lambda_k$ and recover the cost budgets $\beta_k$% (Theorem 4.4, \cite{Beutler85})
+		\item Very data/memory-heavy
+	\end{itemize}
+\end{alertblock}
 \end{frame}
+
 
 \begin{frame}{Dialogue systems}
 A slot-filling problem: the agent (the dialogue system) fills a form by asking the user each slot. It can either:
@@ -362,7 +388,6 @@ The agent (the car) is on a two-way road with a car in front of it,
 \includegraphics[trim={0 0cm 0 0.8cm}, clip, width=0.5\textwidth]{../../source/img/highway.pdf}\\
 \href{https://budgeted-rl.github.io/\#driving-styles}{\includegraphics[width=0.5\linewidth]{img/highway_env}}
 \end{center}
-			
 \end{frame}
 
 \begin{frame}{Risk-sensitive exploration}
