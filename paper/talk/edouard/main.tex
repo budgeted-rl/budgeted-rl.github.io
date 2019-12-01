@@ -41,22 +41,51 @@
 
 \frame{\tocpage}
  
-\section{Setting}
+\section{Motivation and Setting}
 \frame{\sectionpage}
 
-
-\begin{frame}{Motivation}
-
-\begin{alertblock}{Conflicting Objectives}
-Single scalar reward to represent multiple contradictory aspects (task completion vs safety)
-
-No explicit control over the tradeoffs
+\begin{frame}{Learning to act}
+\begin{alertblock}{Optimal Decision-Making}
+	Which action $a_t$ should we choose in state $s_t$ to maximise a cumulative reward $R$?
+	\begin{equation*}
+	\max_\pi \expectedvalueover{a_t\sim\pi(a_t|s_t)} \left[\sum_{t=0}^\infty \gamma^t R(s_t, a_t)\right]
+	\end{equation*}
 \end{alertblock}
 
-Examples?
+\pause
+\begin{itemize}
+	\item[\green \checkmark] A very general formulation
+	\item[\green \checkmark]<2|only@2> Widely used in the industry
+	\item[\red \xmark]<3-4> {\red \textbf{Not}} widely used in the industry
+	\only<4>{\begin{itemize}
+			\item Sample efficiency
+			\item Trial and error
+			\item Unpredictable behaviour
+	\end{itemize}}
+\end{itemize}
 \end{frame}
 
-\begin{frame}{Examples}
+\begin{frame}{Limitation of Reinforcement Learning}
+
+Reinforcement learning relies on a \alert{single reward function $R$}
+\begin{itemize}[<+->]
+	\item[\green \checkmark] A convenient formulation, but;
+	\item[\red \xmark] $R$ is not always easy to design. 
+\end{itemize}
+
+\begin{alertblock}{Conflicting Objectives}
+Complex tasks require multiple \alert{contradictory} aspects. Typically:
+
+\begin{center}
+	\Large {\green Task completion} \quad vs \quad {\red Safety}
+\end{center}
+\end{alertblock}
+\begin{flushright}
+	For example...
+\end{flushright}
+\end{frame}
+
+\begin{frame}{Example problems with conflicts}
 \begin{alertblock}{Dialogue systems}
 A slot-filling problem: the agent fills a form by asking the user each slot. It can either:
 \begin{itemize}
@@ -64,7 +93,7 @@ A slot-filling problem: the agent fills a form by asking the user each slot. It 
 	\item ask to answer with a {\red numeric pad} {\red (unsafe/fast)}.
 \end{itemize}
 \end{alertblock}
-
+\pause
 \begin{alertblock}{Autonomous Driving}
 The agent is driving on a two-way road with a car in front of it,
 \begin{itemize}
@@ -75,6 +104,53 @@ The agent is driving on a two-way road with a car in front of it,
 \href{https://budgeted-rl.github.io/assets/highway-neutral.gif}{\includegraphics[width=0.5\linewidth]{img/highway_env}}
 \end{center}
 \end{alertblock}
+\end{frame}
+
+
+\begin{frame}{Limitation of Reinforcement Learning}
+\color{gray}
+Reinforcement learning relies on a single reward function $R$
+\begin{itemize}
+	\item[\color{gray} \checkmark] \color{gray} A convenient formulation, but;
+	\item[\color{gray} \xmark] \color{gray} $R$ is not always easy to design. 
+\end{itemize}
+
+
+\begin{alertblock}{\color{gray}Conflicting Objectives}
+	\color{gray}
+	Complex tasks require multiple {contradictory} aspects. Typically:
+	
+	\begin{center}
+		\Large { Task completion} \quad vs \quad { Safety}
+	\end{center}
+\end{alertblock}
+\begin{flushright}
+	For example...
+\end{flushright}
+
+\color{black}
+For a fixed reward function $R$,
+\begin{itemize}
+	\item[\incarrow] $\pi^*$ is only guaranteed to lie on a \alert{Pareto-optimal} curve \alert{$\Pi^*$}
+	\item[\incarrow] no control over the $\frac{\green \text{Task Completion}}{\red \text{Safety}}$ trade-off
+\end{itemize}
+\end{frame}
+
+\begin{frame}{The Pareto-optimal curve}
+\centering
+\includegraphics[width=0.9\textwidth]{img/pareto1}
+\end{frame}
+\begin{frame}{From maximal safety to minimal risk}
+\centering
+\includegraphics[width=0.9\textwidth]{img/pareto2}
+\end{frame}
+\begin{frame}{The optimal policy can move freely along $\Pi^*$}
+\centering
+\includegraphics[width=0.9\textwidth]{img/pareto3}
+\end{frame}
+\begin{frame}{How to choose a desired trade-off}
+\centering
+\includegraphics[width=0.9\textwidth]{img/pareto4}
 \end{frame}
 
 
@@ -102,6 +178,11 @@ Maximise rewards \only<2>{\alert{while keeping costs under a fixed budget}}
 \end{block}
 \end{frame}
 
+\begin{frame}{We want to learn $\Pi^*$ rather than $\pi^*_\beta$}
+\centering
+\includegraphics[width=0.9\textwidth]{img/pareto5}
+\end{frame}
+
 \begin{frame}{Budgeted Reinforcement Learning}
 \begin{alertblock}{Budgeted Markov Decision Process}
 	A \alert{BMDP} is a tuple $(\cS, \cA, P, \Rr, \Rc, \gamma\alert{, \cB})$ with:
@@ -125,13 +206,17 @@ Maximise rewards while keeping costs under an \alert{adjustable} budget. $\alert
 \end{block}
 \end{frame}
 
-\begin{frame}{Augmented Settings}
+\begin{frame}{Problem formulation}
 Budgeted policies $\pi$
 \begin{itemize}
 	\item Take a budget $\beta$ as an additional input
 	\item Output a next budget $\beta'$ 
 	\item $\pi:\underbrace{(s,\beta)}_{\os} \rightarrow \underbrace{(a,\beta')}_{\oa}$
 \end{itemize}
+\vspace*{\baselineskip}
+\begin{flushright}
+		\incarrow~Augment the spaces with the budget $\beta$
+\end{flushright}
 
 \end{frame}
 
@@ -330,7 +415,7 @@ We address several limitations of Budgeted Value-Iteration
 
 \end{frame}
 
-\begin{frame}{More scaling}
+\begin{frame}{Scalable implementation}
 
 \begin{itemize}[<+->]
 \item CPU parallel computing of the targets $\sum_{\ov{a'_i}\in \cA_i} \pi_\text{greedy}(\ov{a'_i}|\ov{s'_i}; Q) Q(\ov{s'_i}, \ov{a'_i})$
