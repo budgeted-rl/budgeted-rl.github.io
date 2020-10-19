@@ -3,6 +3,47 @@
 A Budgeted Markov Decision Process (BMDP) is an extension of a Markov Decision Process to critical applications requiring safety constraints. It relies on a notion of risk implemented in the shape of a cost signal constrained  to lie below an — adjustable — threshold.
 So far, BMDPs could only be solved in the case of finite state spaces with known dynamics. This work extends the state-of-the-art to continuous spaces environments and unknown dynamics. We show that the solution to a BMDP is a fixed point of a novel Budgeted Bellman Optimality operator. This observation allows us to introduce natural extensions of Deep Reinforcement Learning algorithms to address large-scale BMDPs. We validate our approach on two simulated applications: spoken dialogue and autonomous driving.
 
+
+----------------------------
+
+# Paper and Bibtex
+
+<div style="display: flex;">
+<div style="flex: 0 0 15em;">
+	<a href="https://papers.nips.cc/paper/9128-budgeted-reinforcement-learning-in-continuous-state-space">
+		<img class="layered-paper-big" src="./assets/images/thumbnail.png">
+		<br>
+		<h2>[Paper]</h2>
+	</a>
+</div>
+<div style="flex: auto" markdown="1">
+
+## Citation
+
+Carrara N., Leurent, E., Laroche R., Urvoy T., Maillard, O-A., and Pietquin O., 2019.<br>
+*Budgeted Reinforcement Learning in Continuous State Space.* In Advances in Neural Information Processing Systems.
+
+## [[Bibtex]]()
+
+```
+@incollection{Carrara2019,
+	title = {Budgeted Reinforcement Learning in Continuous State Space},
+	author = {Carrara, Nicolas and Leurent, Edouard and Laroche, Romain
+		and Urvoy, Tanguy and Maillard, Odalric-Ambrym and Pietquin, Olivier},
+	booktitle = {Advances in Neural Information Processing Systems 32},
+	editor = {H. Wallach and H. Larochelle and A. Beygelzimer and
+		F. d\textquotesingle Alch\'{e}-Buc and E. Fox and R. Garnett},
+	pages = {9299--9309},
+	year = {2019},
+	publisher = {Curran Associates, Inc.},
+	url = {http://papers.nips.cc/paper/
+		9128-budgeted-reinforcement-learning-in-continuous-state-space.pdf}
+}
+```
+</div>
+</div>
+
+-------------------------
 # Experiments
 
 ## Optimal Budgeted Policies
@@ -50,7 +91,7 @@ We display the evolution in the budgeted policy behavior with respect to the bud
 
 <img src="https://raw.github.com/eleurent/budgeted-rl/master/assets/exec-risk-sensitive-1.gif" width="150" height="100" /> <img src="https://raw.github.com/eleurent/budgeted-rl/master/assets/exec-risk-sensitive-2.gif" width="150" height="100" /> <img src="https://raw.github.com/eleurent/budgeted-rl/master/assets/exec-risk-sensitive-3.gif" width="150" height="100" /> <img src="https://raw.github.com/eleurent/budgeted-rl/master/assets/exec-risk-sensitive-4.gif" width="150" height="100" />
 
-
+------------------------------
 # How to reproduce
 
 First install the following conventional libraries for python3: pycairo, numpy, scipy and pytorch. Install the [highway-env](https://github.com/eleurent/highway-env) environment. Then, use one of these methods:
@@ -191,3 +232,10 @@ python main/egreedy/main-egreedy.py config/highway-easy.json 0 10
 | <img src="https://latex.codecogs.com/gif.latex?N_{seed}"/>            | 10         | 10         |
 | <img src="https://latex.codecogs.com/gif.latex?N_{test}"/>            | 150        | 150        |
 | decay epsilon scheduling                                              | 0.0003     | 0.0003     |
+
+
+----------------------------
+
+# Acknowledgements
+
+This work has been supported by CPER Nord-Pas de Calais/FEDER DATA Advanced data science and technologies 2015-2020, the French Ministry of Higher Education and Research, INRIA, and the French Agence Nationale de la Recherche (ANR). We thank Guillaume Gautier, Fabrice Clerot, and Xuedong Shang for the helpful discussions and valuable insights.

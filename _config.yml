@@ -1,7 +1,45 @@
 theme: jekyll-theme-cayman
 title: Budgeted Reinforcement Learning in Continuous State Space
-description: Nicolas Carrara*, Edouard Leurent*, Romain Laroche, Tanguy Urvoy, Odalric-Ambrym Maillard, Olivier Pietquin
+description: null
 
 github:
-  repository_url: https://github.com/eleurent/rl-agents#bftq-budgeted-fitted-q-meat_on_bone
-  paper_url: https://arxiv.org/abs/1903.01004
+  repository_url: https://github.com/eleurent/rl-agents
+
+
+publication:
+  name: NeurIPS 2019
+  url: https://nips.cc/Conferences/2019/
+
+paper_url: https://papers.nips.cc/paper/9128-budgeted-reinforcement-learning-in-continuous-state-space
+slides_url: paper/talk/edouard/main.pdf
+poster_url: paper/poster/poster.pdf
+
+authors:
+  - name: Nicolas Carrara*
+    url: http://ncarrara.fr/
+    affiliation: INRIA SEQUEL<br>Orange
+    affiliation_url: https://team.inria.fr/sequel/
+
+  - name: Edouard Leurent*
+    url: http://edouardleurent.com
+    affiliation: INRIA SEQUEL & VALSE,<br>Renault
+    affiliation_url: https://team.inria.fr/sequel/
+
+  - name: Romain Laroche
+    url: https://www.microsoft.com/en-us/research/people/rolaroch/
+    affiliation: MICROSOFT Research
+    affiliation_url: https://www.microsoft.com/en-us/research/lab/microsoft-research-ai/
+
+  - name: Tanguy Urvoy
+    affiliation: ORANGE Labs
+    affiliation_url: https://www.orange.fr/
+
+  - name: Odalric-Ambrym Maillard
+    url: http://odalricambrymmaillard.neowordpress.fr/
+    affiliation: INRIA SEQUEL
+    affiliation_url: https://team.inria.fr/sequel/
+
+  - name: Olivier Pietquin
+    url: https://research.google/people/105812/
+    affiliation: GOOGLE Research - Brain Team,<br>INRIA SEQUEL
+    affiliation_url: https://team.inria.fr/sequel/

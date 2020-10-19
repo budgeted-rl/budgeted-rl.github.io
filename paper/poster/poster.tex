@@ -18,7 +18,7 @@
 %	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
 %----------------------------------------------------------------------------------------
 
-\documentclass[a0paper,portrait,fontscale=0.355, margin=2cm]{baposter}
+\documentclass[paperwidth=36in,paperheight=48in,portrait,fontscale=0.355, margin=2cm]{baposter}
 
 \usepackage[utf8]{inputenc}
 \usepackage[font=normalsize,labelfont=bf]{caption} % Required for specifying captions to tables and figures
@@ -66,11 +66,24 @@
 \usepackage{lipsum}
 \usepackage{svg}
 \usepackage{cleveref}
+\usepackage{pifont} 
 
 \bibliography{../budgeted_rl.bib}
 
 \input{style}
 \input{../mathdef}
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}{Definition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+\newtheorem{remark}{Remark}
+\newtheorem{property}{Property}
+\newtheorem{assumption}{Assumption}
+\newtheorem{conjecture}{Conjecture}
+\newtheorem*{definition*}{Definition}
+\newtheorem*{theorem*}{Theorem}
+\newtheorem*{proposition*}{Proposition}
+\newtheorem*{remark*}{Remark}
 
 
 \begin{document}
@@ -113,7 +126,7 @@ eyecatcher=true
 Budgeted Reinforcement Learning in Continuous State Space
 }
 {
-Nicolas Carrara, Edouard Leurent, Romain Laroche, \\Tanguy Urvoy, Odalric-Ambrym Maillard, Olivier Pietquin
+Nicolas Carrara$^*$, Edouard Leurent$^*$, Romain Laroche, \\Tanguy Urvoy, Odalric-Ambrym Maillard, Olivier Pietquin
 \vspace{-3\baselineskip}
 }
 {
@@ -133,17 +146,17 @@ Nicolas Carrara, Edouard Leurent, Romain Laroche, \\Tanguy Urvoy, Odalric-Ambrym
     \max_\pi \expectedvalue_\pi \underbrace{\sum_{t=0}^\infty \gamma^t R_r(s_t, a_t)}_{G_r^\pi}
 \end{equation*}
 
-\begin{itemize}[nolistsep]
-    \item[\incarrow] \hlr{Single scalar reward} to represent \hlr{multiple} \hlr{contradictory} aspects (e.g. complete task and avoid collisions)
-    \item[\incarrow] \hlr{No control over the spread} of the performance distribution\\
-     
-\end{itemize}
 
-\textbf{Constrained MDP} $(\cS, \cA, P, R_r, R_c, \gamma)$
-\begin{itemize}[nolistsep]
+    \hlr{Single scalar} reward for \hlb{multiple contradictory} aspects 
+    \begin{center}
+    	\includegraphics[trim={0 1.7cm 0 3cm}, clip, width=0.9\linewidth]{img/pareto}
+    \end{center}
+
+
+\textbf{Constrained MDP} $(\cS, \cA, P, R_r, $\hlb{$R_c$}$, \gamma, $\hlb{$\beta$}$)$
+\begin{itemize}[]
     \item $[$\cite{BEUTLER1985236,Altman95constrainedmarkov}$]$
-    \item Introduce a \hlb{cost signal} $R_c$
-    \item Constrained objective
+    \item Introduce a cost signal $R_c$ and constrained objective
 \begin{equation*}
 \begin{array}{lcr}
  \displaystyle \max_{\pi\in\cM(\cA)^\cS} \expectedvalue[G_r^\pi | s_0=s] & \text{\hlb{ s.t. }} & \expectedvalue[G_c^\pi | s_0=s] \leq \beta
@@ -152,11 +165,11 @@ Nicolas Carrara, Edouard Leurent, Romain Laroche, \\Tanguy Urvoy, Odalric-Ambrym
 \item[\incarrow] The cost budget $\beta$ \hlr{cannot be changed} after training\\
 \end{itemize}
 
-\textbf{Budgeted MDP}
+\textbf{Budgeted MDP} $(\cS, \cA, P, R_r, {R_c}, \gamma, \hleb{\cB})$
 
-\begin{itemize}[nolistsep]
-    \item $[$\cite{Boutilier_Lu:uai16}$]$
-    \item We seek \hlg{one general policy} $\pi(s,\beta)$ that solves every CMDP for any $\beta$
+\begin{itemize}[]
+	\item $[$\cite{Boutilier_Lu:uai16}$]$
+    \item We seek \hlg{one general policy} $\pi(s,\beta)$ that solves every CMDP for any $\beta\in\cB$
     \item[\incarrow] Can only be solved for \hlr{finite} $\cS$ and \hlr{known} $P, R_r, R_c$.
 \end{itemize}
 }
@@ -184,8 +197,7 @@ Nicolas Carrara, Edouard Leurent, Romain Laroche, \\Tanguy Urvoy, Odalric-Ambrym
 
 \textbf{Policy Evaluation}\\
 
-The Bellman Expectation equations% [\cite{Bellman}]
-are preserved, and the Bellman Expectation Operator $\cT^\pi$ is a \hlg{$\gamma$-contraction}.
+The Bellman Expectation equations are \hlg{preserved}, and the Bellman Expectation Operator $\cT^\pi$ is a \hlg{$\gamma$-contraction}.
 }
 
 %----------------------------------------------------------------------------------------
@@ -200,11 +212,11 @@ are preserved, and the Bellman Expectation Operator $\cT^\pi$ is a \hlg{$\gamma$
     \end{equation*}
     \item[(ii)] \hlg{Maximise the rewards}:
     \begin{equation*}
-        V_r^*(\os) \eqdef {\max}_{\pi\in\Pi_a(\os)}  V_r^\pi(\os) \qquad\quad \Pi_r(\os) \eqdef \argmax_{\pi\in\Pi_a(\os)}  V_r^\pi(\os)
+        V_r^*(\os) \eqdef {\max}_{\pi\in\Pi_a(\os)}  V_r^\pi(\os), \quad \Pi_r(\os) \eqdef \argmax_{\pi\in\Pi_a(\os)}  V_r^\pi(\os)
     \end{equation*}
     \item[(iii)] \hlr{Minimise the costs}: 
     \begin{equation*}
-        V_c^*(\os) \eqdef {\min}_{\pi\in\Pi_r(\os)}  V_c^\pi(\os), \qquad\quad \Pi^*(\os) \eqdef \argmin_{\pi\in\Pi_r(\os)}  V_c^\pi(\os)
+        V_c^*(\os) \eqdef {\min}_{\pi\in\Pi_r(\os)}  V_c^\pi(\os), \quad \Pi^*(\os) \eqdef \argmin_{\pi\in\Pi_r(\os)}  V_c^\pi(\os)
     \end{equation*}
 \end{enumerate}
 
@@ -274,7 +286,9 @@ $$\forall\epsilon>0, \exists Q^1,Q^2\in(\Real^2)^{\ocS\ocA}:\|\cT Q^1-\cT Q^2\|_
 \end{theorem*}
 }
 
-Despite those theoretical limitations, we observed \hlg{empirical convergence} in our experiments
+\begin{itemize}[nolistsep]
+	\item[\hlr{\xmark}] We \hlr{cannot guarantee} the convergence of $\cT^n(Q_0)$ to $Q^*$.
+\end{itemize}
 
 \bookboxx{
 \begin{theorem*}[Contractivity on smooth $Q$-functions]
@@ -282,6 +296,10 @@ Despite those theoretical limitations, we observed \hlg{empirical convergence} i
 \hlg{$\cT$ is a contraction when restricted} to the subset $\cL_\gamma$ of $Q$-functions such that "$Q_r$ is \hlg{$L$-Lipschitz} with respect to $Q_c$", with $L<\frac{1}{\gamma}-1$.
 \end{theorem*}
 }
+\begin{itemize}[nolistsep]
+	\item[\hlg{\checkmark}] We \hlg{guarantee} convergence under some (strong) assumptions.
+	\item[\hlg{\checkmark}] We \hlg{observe} empirical convergence.
+\end{itemize}
 }
 
 %----------------------------------------------------------------------------------------
@@ -344,7 +362,7 @@ $Q_{\theta_0} \leftarrow 0$\;
 \textbf{How to compute the greedy policy?}
 
 \begin{center}
-\includegraphics[width=0.8\linewidth]{../source/img/pi.pdf}    
+\includegraphics[width=0.76\linewidth]{../source/img/pi.pdf}    
 \end{center}
 \vspace*{-1em}
 \bookboxx{
@@ -361,7 +379,7 @@ $\pi_\text{greedy}$ in \eqref{eq:pi_greedy} can be \hlg{computed explicitly}, as
 \textbf{Function approximation}
 
 \begin{center}
-\resizebox{.7\textwidth}{!}{%
+\resizebox{.65\textwidth}{!}{%
 \input{../source/architecture.tex}
 }    
 \end{center}
@@ -402,7 +420,7 @@ Pareto frontier
 %----------------------------------------------------------------------------------------
 %	Acknowledgements
 %----------------------------------------------------------------------------------------
-\headerbox{Acknowledgements}{name=ack,column=0,span=1,below=bopt}{
+\headerbox{Acknowledgements}{name=ack,column=0,span=1,below=bopt, above=bottom}{
 This work has been supported by CPER Nord-Pas de Calais/FEDER DATA Advanced data science and technologies 2015-2020, the French Ministry of Higher Education and Research, INRIA, and the French Agence Nationale de la Recherche (ANR).
 }
 
@@ -410,13 +428,13 @@ This work has been supported by CPER Nord-Pas de Calais/FEDER DATA Advanced data
 %----------------------------------------------------------------------------------------
 %	References
 %----------------------------------------------------------------------------------------
-\headerbox{References}{name=refs,column=0,span=1,below=ack, above=bottom}{
-    {
-    \AtNextBibliography{\footnotesize}
-    \setlength{\bibitemsep}{3pt}
-    \printbibliography[heading=none]
-    }
-}
+%\headerbox{References}{name=refs,column=0,span=1,below=ack, above=bottom}{
+%    {
+%    \AtNextBibliography{\footnotesize}
+%    \setlength{\bibitemsep}{3pt}
+%    \printbibliography[heading=none]
+%    }
+%}
 
 
 \end{poster}
